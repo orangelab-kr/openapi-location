@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource dbModel {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator clientModel {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-1.0.x"]
+}
+
+model RegionModel {
+  regionId String @id @default(uuid())
+  name     String
+
+  pricingId String
+  pricing   PricingModel @relation(fields: [pricingId], references: [pricingId])
+
+  geofences RegionGeofenceModel[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model RegionGeofenceModel {
+  regionGeofenceId String @id @default(uuid())
+
+  name    String
+  polygon Unsupported("polygon")
+
+  regionId String
+  region   RegionModel @relation(fields: [regionId], references: [regionId])
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model PricingModel {
+  pricingId String @id @default(uuid())
+  name      String
+
+  standardPrice Int // 기본 이용 요금 
+  nightlyPrice Int // 기본 야간 요금
+  standardTime  Int // 기본 이용 제공(분)
+
+  perMinuteStandardPrice Int // 기본 분당 요금
+  perMinuteNightlyPrice Int // 야간 분당 요금
+  penaltyPrice   Int // 패널티
+
+  regions RegionModel[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
