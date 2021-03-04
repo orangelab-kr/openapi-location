@@ -1,4 +1,4 @@
-service: 'openapi-geolocation'
+service: 'openapi-location'
 useDotenv: true
 
 provider:
