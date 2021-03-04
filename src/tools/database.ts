@@ -16,12 +16,12 @@ export default class Database {
         }
       }
 
-      if (['delete', 'deleteMany'].includes(params.action)) {
+      if (['delete', 'delete'].includes(params.action)) {
         switch (params.action) {
           case 'delete':
             params.action = 'update';
             break;
-          case 'deleteMany':
+          case 'delete':
             params.action = 'updateMany';
             break;
         }

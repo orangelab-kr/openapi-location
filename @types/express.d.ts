@@ -1,10 +1,9 @@
-import { PricingModel } from '@prisma/client';
+import { PricingModel, RegionModel } from '@prisma/client';
 import 'express';
 
 declare global {
   namespace Express {
     interface Request {
-      pricing: PricingModel;
       internal: {
         sub: string;
         iss: string;
@@ -12,6 +11,8 @@ declare global {
         prs: string[];
         iat: Date;
         exp: Date;
+        pricing: PricingModel;
+        region: RegionModel;
       };
     }
   }

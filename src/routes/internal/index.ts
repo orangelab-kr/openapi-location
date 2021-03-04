@@ -1,10 +1,12 @@
 import { Router } from 'express';
-import getInternalPricingRouter from './pricings';
+import getInternalPricingsRouter from './pricings';
+import getInternalRegionsRouter from './regions';
 
 export default function getInternalRouter(): Router {
   const router = Router();
 
-  router.use('/pricings', getInternalPricingRouter());
+  router.use('/regions', getInternalRegionsRouter());
+  router.use('/pricings', getInternalPricingsRouter());
 
   return router;
 }

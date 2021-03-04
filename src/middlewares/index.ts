@@ -1,1 +1,1 @@
-export { default as PricingMiddleware } from './pricing';
+export * from './internal';

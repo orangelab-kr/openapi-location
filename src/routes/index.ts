@@ -1,6 +1,7 @@
 import express, { Application } from 'express';
 
 import InternalError from '../tools/error';
+import InternalMiddleware from '../middlewares/internal';
 import OPCODE from '../tools/opcode';
 import Wrapper from '../tools/wrapper';
 import getInternalRouter from './internal';
@@ -18,13 +19,14 @@ export default function getRouter(): Application {
   router.use(logging);
   router.use(express.json());
   router.use(express.urlencoded({ extended: true }));
-  router.use('/internal', getInternalRouter());
+  router.use('/internal', InternalMiddleware(), getInternalRouter());
 
   router.get(
     '/',
     Wrapper(async (_req, res) => {
       res.json({
         opcode: OPCODE.SUCCESS,
+        name: process.env.AWS_LAMBDA_FUNCTION_NAME,
         mode: process.env.NODE_ENV,
         cluster: hostname,
       });

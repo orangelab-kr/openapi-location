@@ -1,10 +1,10 @@
+import InternalPricingMiddleware from '../../middlewares/internal/pricing';
 import OPCODE from '../../tools/opcode';
 import Pricing from '../../controllers/pricing';
-import PricingMiddleware from '../../middlewares/pricing';
 import { Router } from 'express';
 import { Wrapper } from '../../tools';
 
-export default function getInternalPricingRouter(): Router {
+export default function getInternalPricingsRouter(): Router {
   const router = Router();
 
   router.get(
@@ -17,9 +17,9 @@ export default function getInternalPricingRouter(): Router {
 
   router.get(
     '/:pricingId',
-    PricingMiddleware(),
+    InternalPricingMiddleware(),
     Wrapper(async (req, res) => {
-      const { pricing } = req;
+      const { pricing } = req.internal;
       res.json({ opcode: OPCODE.SUCCESS, pricing });
     })
   );
@@ -34,19 +34,19 @@ export default function getInternalPricingRouter(): Router {
 
   router.post(
     '/:pricingId',
-    PricingMiddleware(),
+    InternalPricingMiddleware(),
     Wrapper(async (req, res) => {
-      const { body, pricing } = req;
-      await Pricing.modifyPricing(pricing, body);
+      const { body, internal } = req;
+      await Pricing.modifyPricing(internal.pricing, body);
       res.json({ opcode: OPCODE.SUCCESS });
     })
   );
 
   router.delete(
     '/:pricingId',
-    PricingMiddleware(),
+    InternalPricingMiddleware(),
     Wrapper(async (req, res) => {
-      await Pricing.deletePricing(req.pricing);
+      await Pricing.deletePricing(req.internal.pricing);
       res.json({ opcode: OPCODE.SUCCESS });
     })
   );

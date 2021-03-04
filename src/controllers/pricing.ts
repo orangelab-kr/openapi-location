@@ -188,8 +188,15 @@ export default class Pricing {
 
   /** 가격 정책을 삭제합니다. */
   public static async deletePricing(pricing: PricingModel): Promise<void> {
-    const { pricingId } = pricing;
-    await prisma.pricingModel.delete({ where: { pricingId } });
+    try {
+      const { pricingId } = pricing;
+      await prisma.pricingModel.deleteMany({ where: { pricingId } });
+    } catch (err) {
+      throw new InternalError(
+        '해당 가격 정책을 사용하는 지역이 존재합니다.',
+        OPCODE.ERROR
+      );
+    }
   }
 
   /** 가격 정책 이름으로 가격 정책을 가져옵니다. */
