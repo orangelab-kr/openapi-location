@@ -35,6 +35,7 @@ export default class Region {
     const where: Prisma.RegionModelWhereInput = {};
     const orderBy = { [orderByField]: orderBySort };
     if (search) where.name = { contains: search };
+    const include: Prisma.RegionModelInclude = { pricing: true };
     const [total, regions] = await prisma.$transaction([
       prisma.regionModel.count({ where }),
       prisma.regionModel.findMany({
@@ -42,6 +43,7 @@ export default class Region {
         skip,
         where,
         orderBy,
+        include,
       }),
     ]);
 
@@ -65,6 +67,7 @@ export default class Region {
   public static async getRegion(regionId: string): Promise<RegionModel | null> {
     const region = await prisma.regionModel.findFirst({
       where: { regionId },
+      include: { pricing: true },
     });
 
     return region;

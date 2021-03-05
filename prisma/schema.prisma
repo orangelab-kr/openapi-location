@@ -25,12 +25,19 @@ model RegionModel {
   deletedAt DateTime?
 }
 
+enum RegionGeofenceType {
+  ALLOWED
+  DISALLOWED
+  NOT_OPERATED
+}
+
 model RegionGeofenceModel {
   regionGeofenceId String @id @default(uuid())
 
   name    String
   polygon Unsupported("polygon")
 
+  type RegionGeofenceType
   regionId String
   region   RegionModel @relation(fields: [regionId], references: [regionId])
 

@@ -1,11 +1,18 @@
 import { OPCODE, Wrapper } from '../../../tools';
 
-import InternalRegionMiddleware from '../../../middlewares/internal/region';
+import { InternalRegionMiddleware } from '../../../middlewares';
 import Region from '../../../controllers/region';
 import { Router } from 'express';
+import getInternalRegionsGeofencesRouter from './geofences';
 
 export default function getInternalRegionsRouter(): Router {
   const router = Router();
+
+  router.use(
+    '/:regionId/geofences',
+    InternalRegionMiddleware(),
+    getInternalRegionsGeofencesRouter()
+  );
 
   router.get(
     '/',

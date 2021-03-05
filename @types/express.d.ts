@@ -1,4 +1,4 @@
-import { PricingModel, RegionModel } from '@prisma/client';
+import { PricingModel, RegionGeofenceModel, RegionModel } from '@prisma/client';
 import 'express';
 
 declare global {
@@ -13,6 +13,7 @@ declare global {
         exp: Date;
         pricing: PricingModel;
         region: RegionModel;
+        geofence: RegionGeofenceModel;
       };
     }
   }

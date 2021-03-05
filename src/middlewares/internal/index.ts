@@ -5,8 +5,9 @@ import InternalError from '../../tools/error';
 import jwt from 'jsonwebtoken';
 import moment from 'moment';
 
-export * from './pricing';
-export * from './region';
+export { default as InternalGeofenceMiddleware } from './geofence';
+export { default as InternalPricingMiddleware } from './pricing';
+export { default as InternalRegionMiddleware } from './region';
 
 export default function InternalMiddleware(): Callback {
   return Wrapper(async (req, res, next) => {
