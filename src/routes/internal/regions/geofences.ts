@@ -60,7 +60,8 @@ export default function getInternalRegionsGeofencesRouter(): Router {
     '/:regionGeofenceId',
     InternalGeofenceMiddleware(),
     Wrapper(async (req, res) => {
-      await Geofence.deleteGeofence(req.internal.geofence);
+      const { region, geofence } = req.internal;
+      await Geofence.deleteGeofence(region, geofence);
       res.json({ opcode: OPCODE.SUCCESS });
     })
   );

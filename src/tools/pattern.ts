@@ -31,15 +31,23 @@ const PATTERN = {
     TYPE: Joi.string()
       .valid(...Object.keys(RegionGeofenceType))
       .required(),
-    POLYGON: Joi.array()
-      .min(1)
-      .required()
-      .items(
-        Joi.array().items(
-          Joi.number().min(-90).max(90).required(),
-          Joi.number().min(-180).max(180).required()
-        )
-      ),
+    GEOJSON: Joi.object({
+      type: Joi.string().valid('Polygon').required(),
+      coordinates: Joi.array()
+        .min(1)
+        .required()
+        .items(
+          Joi.array()
+            .min(1)
+            .required()
+            .items(
+              Joi.array().items(
+                Joi.number().min(-90).max(90).required(),
+                Joi.number().min(-180).max(180).required()
+              )
+            )
+        ),
+    }),
   },
 };
 

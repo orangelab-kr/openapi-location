@@ -67,7 +67,7 @@ export default class Region {
   public static async getRegion(regionId: string): Promise<RegionModel | null> {
     const region = await prisma.regionModel.findFirst({
       where: { regionId },
-      include: { pricing: true },
+      include: { pricing: true, geofences: true },
     });
 
     return region;
