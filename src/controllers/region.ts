@@ -76,14 +76,16 @@ export default class Region {
   /** 지역을 생성합니다. */
   public static async createRegion(props: {
     name: string;
+    enabled: boolean;
     pricingId: number;
   }): Promise<RegionModel> {
     const schema = Joi.object({
       name: PATTERN.REGION.NAME,
+      enabled: PATTERN.REGION.ENABLED,
       pricingId: PATTERN.PRICING.ID,
     });
 
-    const { name, pricingId } = await schema.validateAsync(props);
+    const { name, enabled, pricingId } = await schema.validateAsync(props);
     const exists = await Region.getRegionByName(name);
     if (exists) {
       throw new InternalError(
@@ -94,7 +96,7 @@ export default class Region {
 
     await Pricing.getPricingOrThrow(pricingId);
     const region = await prisma.regionModel.create({
-      data: { name, pricing: { connect: { pricingId } } },
+      data: { name, enabled, pricing: { connect: { pricingId } } },
     });
 
     return region;
@@ -105,17 +107,19 @@ export default class Region {
     region: RegionModel,
     props: {
       name: string;
+      enabled: boolean;
       pricingId: string;
     }
   ): Promise<void> {
     const schema = Joi.object({
       name: PATTERN.REGION.NAME.optional(),
+      enabled: PATTERN.REGION.ENABLED.optional(),
       pricingId: PATTERN.PRICING.ID.optional(),
     });
 
     const { regionId } = region;
-    const { name, pricingId } = await schema.validateAsync(props);
-    const data: Prisma.RegionModelUpdateInput = { name };
+    const { name, enabled, pricingId } = await schema.validateAsync(props);
+    const data: Prisma.RegionModelUpdateInput = { name, enabled };
     const where: Prisma.RegionModelWhereUniqueInput = { regionId };
     if (name && region.name !== name) {
       const exists = await Region.getRegionByName(name);

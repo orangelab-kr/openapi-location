@@ -23,10 +23,12 @@ const PATTERN = {
   },
   REGION: {
     ID: Joi.string().uuid().required(),
+    ENABLED: Joi.boolean().required(),
     NAME: Joi.string().min(2).max(16).required(),
   },
   GEOFENCE: {
     ID: Joi.string().uuid().required(),
+    ENABLED: Joi.boolean().required(),
     NAME: Joi.string().min(2).max(16).required(),
     TYPE: Joi.string()
       .valid(...Object.keys(RegionGeofenceType))

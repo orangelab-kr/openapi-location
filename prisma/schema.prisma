@@ -13,6 +13,7 @@ generator clientModel {
 
 model RegionModel {
   regionId String @id @default(uuid())
+  enabled  Boolean @default(true)
   name     String
 
   pricingId String
@@ -33,6 +34,7 @@ enum RegionGeofenceType {
 
 model RegionGeofenceModel {
   regionGeofenceId String @id @default(uuid())
+  enabled  Boolean @default(true)
 
   name    String
   geojson Json

@@ -95,17 +95,19 @@ export default class Geofence {
     region: RegionModel,
     props: {
       name: string;
+      enabled: boolean;
       type: RegionGeofenceType;
       geojson: { type: 'Polygon'; coordinates: [[number, number]][][] };
     }
   ): Promise<RegionGeofenceModel> {
     const schema = Joi.object({
       name: PATTERN.GEOFENCE.NAME,
+      enabled: PATTERN.GEOFENCE.ENABLED,
       type: PATTERN.GEOFENCE.TYPE,
       geojson: PATTERN.GEOFENCE.GEOJSON,
     });
 
-    const { name, type, geojson } = await schema.validateAsync(props);
+    const { name, enabled, type, geojson } = await schema.validateAsync(props);
     const exists = await Geofence.getGeofenceByName(region, name);
     if (exists) {
       throw new InternalError(
@@ -116,7 +118,7 @@ export default class Geofence {
 
     const { regionId } = region;
     const regionGeofence = await prisma.regionGeofenceModel.create({
-      data: { name, type, geojson, region: { connect: { regionId } } },
+      data: { name, type, enabled, geojson, region: { connect: { regionId } } },
     });
 
     return regionGeofence;
@@ -128,17 +130,19 @@ export default class Geofence {
     regionGeofence: RegionGeofenceModel,
     props: {
       name?: string;
+      enabled?: boolean;
       type?: RegionGeofenceType;
       geojson?: { type: 'Polygon'; coordinates: [[number, number]][][] };
     }
   ): Promise<void> {
     const schema = Joi.object({
       name: PATTERN.GEOFENCE.NAME.optional(),
+      enabled: PATTERN.GEOFENCE.ENABLED.optional(),
       type: PATTERN.GEOFENCE.TYPE.optional(),
       geojson: PATTERN.GEOFENCE.GEOJSON.optional(),
     });
 
-    const { name, type, geojson } = await schema.validateAsync(props);
+    const { name, enabled, type, geojson } = await schema.validateAsync(props);
     if (name && name !== regionGeofence.name) {
       const exists = await Geofence.getGeofenceByName(region, name);
       if (exists) {
@@ -153,7 +157,7 @@ export default class Geofence {
     const { regionGeofenceId } = regionGeofence;
     await prisma.regionGeofenceModel.updateMany({
       where: { regionGeofenceId, region: { regionId } },
-      data: { name, type, geojson },
+      data: { name, type, enabled, geojson },
     });
   }
 
