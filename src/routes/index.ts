@@ -5,6 +5,7 @@ import InternalMiddleware from '../middlewares/internal';
 import OPCODE from '../tools/opcode';
 import Wrapper from '../tools/wrapper';
 import getInternalRouter from './internal';
+import getRegionRouter from './regions';
 import logger from '../tools/logger';
 import morgan from 'morgan';
 import os from 'os';
@@ -20,6 +21,7 @@ export default function getRouter(): Application {
   router.use(express.json());
   router.use(express.urlencoded({ extended: true }));
   router.use('/internal', InternalMiddleware(), getInternalRouter());
+  router.use('/regions', getRegionRouter());
 
   router.get(
     '/',

@@ -6,6 +6,30 @@ import Pricing from './pricing';
 const { prisma } = Database;
 
 export default class Region {
+  /** 지역에 따른 모든 Geofence 를 가져옵니다. */
+  public static async getRegionsForUser(
+    regionId?: string
+  ): Promise<RegionModel[]> {
+    const regions = await prisma.regionModel.findMany({
+      where: { enabled: true, regionId },
+      include: { pricing: true, geofences: true },
+    });
+
+    return regions;
+  }
+
+  /** 지역 이름과 지역 ID를 가져옵니다. */
+  public static async getShortRegionsForUser(): Promise<
+    { regionId: string; name: string }[]
+  > {
+    const regions = await prisma.regionModel.findMany({
+      where: { enabled: true },
+      select: { regionId: true, name: true },
+    });
+
+    return regions;
+  }
+
   /** 지역 목록 조회 */
   public static async getRegions(props: {
     take?: number;
