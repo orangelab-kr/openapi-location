@@ -10,9 +10,10 @@ export default class Region {
   public static async getRegionsForUser(
     regionId?: string
   ): Promise<RegionModel[]> {
+    const enabled = true;
     const regions = await prisma.regionModel.findMany({
-      where: { enabled: true, regionId },
       include: { pricing: true, geofences: true },
+      where: { enabled, regionId, geofences: { some: { enabled } } },
     });
 
     return regions;
