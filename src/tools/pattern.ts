@@ -27,6 +27,10 @@ const PATTERN = {
     NAME: Joi.string().min(2).max(16).required(),
   },
   GEOFENCE: {
+    POINT: Joi.object({
+      lat: Joi.number().min(-90).max(90).required(),
+      lng: Joi.number().min(-180).max(180).required(),
+    }).required(),
     ID: Joi.string().uuid().required(),
     ENABLED: Joi.boolean().required(),
     NAME: Joi.string().min(2).max(16).required(),

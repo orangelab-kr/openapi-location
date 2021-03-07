@@ -13,6 +13,36 @@ import PATTERN from '../tools/pattern';
 const { prisma } = Database;
 
 export default class Geofence {
+  public static async getGeofenceTypeByLocation(props: {
+    lat?: number;
+    lng?: number;
+  }): Promise<RegionGeofenceType> {
+    let type: RegionGeofenceType = 'NOT_OPERATED';
+    const { lat, lng } = await PATTERN.GEOFENCE.POINT.validateAsync(props);
+
+    const regionGeofences: RegionGeofenceModel[] = await prisma.$queryRaw(`
+      SELECT * FROM RegionGeofenceModel WHERE enabled = true
+      AND MBRContains(ST_GeomFromGeoJSON(geojson), GeomFromText("Point(${lng} ${lat})"));
+    `);
+
+    const allowed = regionGeofences.find(
+      ({ type }) => type === RegionGeofenceType.ALLOWED
+    );
+
+    const disallowed = regionGeofences.find(
+      ({ type }) => type === RegionGeofenceType.DISALLOWED
+    );
+
+    const notOperated = regionGeofences.find(
+      ({ type }) => type === RegionGeofenceType.NOT_OPERATED
+    );
+
+    if (allowed) type = 'ALLOWED';
+    if (disallowed) type = 'DISALLOWED';
+    if (notOperated) type = 'NOT_OPERATED';
+    return type;
+  }
+
   /** 모든 구역 조회 */
   public static async getGeofences(
     region: RegionModel,
