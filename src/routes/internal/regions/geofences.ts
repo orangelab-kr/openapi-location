@@ -1,3 +1,6 @@
+import InternalPermissionMiddleware, {
+  PERMISSION,
+} from '../../../middlewares/internal/permissions';
 import { OPCODE, Wrapper } from '../../../tools';
 
 import Geofence from '../../../controllers/geofence';
@@ -9,6 +12,7 @@ export default function getInternalRegionsGeofencesRouter(): Router {
 
   router.get(
     '/',
+    InternalPermissionMiddleware(PERMISSION.GEOFENCES_LIST),
     Wrapper(async (req, res) => {
       const {
         query,
@@ -22,6 +26,7 @@ export default function getInternalRegionsGeofencesRouter(): Router {
 
   router.get(
     '/:regionGeofenceId',
+    InternalPermissionMiddleware(PERMISSION.GEOFENCES_VIEW),
     InternalGeofenceMiddleware(),
     Wrapper(async (req, res) => {
       const { geofence } = req.internal;
@@ -31,6 +36,7 @@ export default function getInternalRegionsGeofencesRouter(): Router {
 
   router.post(
     '/',
+    InternalPermissionMiddleware(PERMISSION.GEOFENCES_CREATE),
     Wrapper(async (req, res) => {
       const {
         body,
@@ -44,6 +50,7 @@ export default function getInternalRegionsGeofencesRouter(): Router {
 
   router.post(
     '/:regionGeofenceId',
+    InternalPermissionMiddleware(PERMISSION.GEOFENCES_MODIFY),
     InternalGeofenceMiddleware(),
     Wrapper(async (req, res) => {
       const {
@@ -58,6 +65,7 @@ export default function getInternalRegionsGeofencesRouter(): Router {
 
   router.delete(
     '/:regionGeofenceId',
+    InternalPermissionMiddleware(PERMISSION.GEOFENCES_DELETE),
     InternalGeofenceMiddleware(),
     Wrapper(async (req, res) => {
       const { region, geofence } = req.internal;

@@ -8,7 +8,7 @@ declare global {
         sub: string;
         iss: string;
         aud: string;
-        prs: string[];
+        prs: boolean[];
         iat: Date;
         exp: Date;
         pricing: PricingModel;

@@ -45,8 +45,15 @@ export default function InternalMiddleware(): Callback {
       const payload = await schema.validateAsync(data);
       const iat = moment(payload.iat);
       const exp = moment(payload.exp);
+      const prs = parseInt(payload.prs, 36)
+        .toString(2)
+        .padStart(128, '0')
+        .split('')
+        .reverse()
+        .map((v) => v === '1');
 
       req.internal = payload;
+      req.internal.prs = prs;
       if (exp.diff(iat, 'hours') > 6) throw Error();
       logger.info(
         `[Internal] [${payload.iss}] ${payload.aud} - ${req.method} ${req.originalUrl}`

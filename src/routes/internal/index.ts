@@ -1,3 +1,6 @@
+import InternalPermissionMiddleware, {
+  PERMISSION,
+} from '../../middlewares/internal/permissions';
 import { OPCODE, Wrapper } from '../../tools';
 
 import Geofence from '../../controllers/geofence';
@@ -12,6 +15,7 @@ export default function getInternalRouter(): Router {
   router.use('/pricings', getInternalPricingsRouter());
   router.get(
     '/type',
+    InternalPermissionMiddleware(PERMISSION.GEOFENCES_TYPE),
     Wrapper(async (req, res) => {
       const type = await Geofence.getGeofenceTypeByLocation(req.query);
       res.json({ opcode: OPCODE.SUCCESS, type });

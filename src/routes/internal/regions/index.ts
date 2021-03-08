@@ -1,3 +1,6 @@
+import InternalPermissionMiddleware, {
+  PERMISSION,
+} from '../../../middlewares/internal/permissions';
 import { OPCODE, Wrapper } from '../../../tools';
 
 import { InternalRegionMiddleware } from '../../../middlewares';
@@ -16,6 +19,7 @@ export default function getInternalRegionsRouter(): Router {
 
   router.get(
     '/',
+    InternalPermissionMiddleware(PERMISSION.REGIONS_LIST),
     Wrapper(async (req, res) => {
       const { regions, total } = await Region.getRegions(req.query);
       res.json({ opcode: OPCODE.SUCCESS, regions, total });
@@ -24,6 +28,7 @@ export default function getInternalRegionsRouter(): Router {
 
   router.get(
     '/:regionId',
+    InternalPermissionMiddleware(PERMISSION.REGIONS_VIEW),
     InternalRegionMiddleware(),
     Wrapper(async (req, res) => {
       const { region } = req.internal;
@@ -33,6 +38,7 @@ export default function getInternalRegionsRouter(): Router {
 
   router.post(
     '/',
+    InternalPermissionMiddleware(PERMISSION.REGIONS_CREATE),
     Wrapper(async (req, res) => {
       const { regionId } = await Region.createRegion(req.body);
       res.json({ opcode: OPCODE.SUCCESS, regionId });
@@ -41,6 +47,7 @@ export default function getInternalRegionsRouter(): Router {
 
   router.post(
     '/:regionId',
+    InternalPermissionMiddleware(PERMISSION.REGIONS_MODIFY),
     InternalRegionMiddleware(),
     Wrapper(async (req, res) => {
       const { body, internal } = req;
@@ -51,6 +58,7 @@ export default function getInternalRegionsRouter(): Router {
 
   router.delete(
     '/:regionId',
+    InternalPermissionMiddleware(PERMISSION.REGIONS_DELETE),
     InternalRegionMiddleware(),
     Wrapper(async (req, res) => {
       await Region.deleteRegion(req.internal.region);
