@@ -4987,6 +4987,15 @@ open@^7.3.1, open@^7.4.0:
     is-docker "^2.0.0"
     is-wsl "^2.1.1"
 
+openapi-internal-sdk@^1.1.0:
+  version "1.1.0"
+  resolved "https://hikick-547032093617.d.codeartifact.ap-northeast-1.amazonaws.com:443/npm/hikick/openapi-internal-sdk/-/openapi-internal-sdk-1.1.0.tgz#93f2083d0777d1cf07a55c4a1ba3e3d05db3aded"
+  integrity sha512-dHfscknZJ+v6yIJ/lH6lgKFRQgUa5cE6NZQxKnSwLhFlJcMZaTuQzSPrMG4nxMRmltgthKo/PStpC06tCuEhwg==
+  dependencies:
+    axios "^0.21.1"
+    jsonwebtoken "^8.5.1"
+    moment "^2.29.1"
+
 opn@^5.5.0:
   version "5.5.0"
   resolved "https://registry.yarnpkg.com/opn/-/opn-5.5.0.tgz#fc7164fab56d235904c51c3b27da6758ca3b9bfc"

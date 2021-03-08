@@ -4,6 +4,7 @@ import Geofence from '../controllers/geofence';
 import InternalError from '../tools/error';
 import InternalMiddleware from '../middlewares/internal';
 import OPCODE from '../tools/opcode';
+import { PlatformMiddleware } from '../middlewares';
 import Wrapper from '../tools/wrapper';
 import getInternalRouter from './internal';
 import getRegionRouter from './regions';
@@ -22,9 +23,10 @@ export default function getRouter(): Application {
   router.use(express.json());
   router.use(express.urlencoded({ extended: true }));
   router.use('/internal', InternalMiddleware(), getInternalRouter());
-  router.use('/regions', getRegionRouter());
+  router.use('/regions', PlatformMiddleware(), getRegionRouter());
   router.get(
     '/type',
+    PlatformMiddleware(),
     Wrapper(async (req, res) => {
       const type = await Geofence.getGeofenceTypeByLocation(req.query);
       res.json({ opcode: OPCODE.SUCCESS, type });
