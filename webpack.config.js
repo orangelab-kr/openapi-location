@@ -21,15 +21,13 @@ module.exports = {
       },
     ],
   },
-  plugins: [
-    new CopyWebpackPlugin({ patterns: ['./prisma/schema.prisma'] }), // without this the prisma generate above will not work
-  ],
+  plugins: [new CopyWebpackPlugin({ patterns: ['./prisma/schema.prisma'] })],
   output: {
     libraryTarget: 'commonjs',
     filename: '[name].js',
     path: path.resolve(__dirname, '.webpack'),
   },
   optimization: {
-    concatenateModules: false,
+    concatenateModules: true,
   },
 };

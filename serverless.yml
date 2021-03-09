@@ -1,14 +1,17 @@
 service: 'openapi-location'
-useDotenv: true
+useDotenv: false
 
 provider:
   name: aws
   runtime: nodejs12.x
   region: ap-northeast-2
-  stage: ${opt:stage, 'prod'}
+  stage: ${opt:stage, 'dev'}
   lambdaHashingVersion: '20201221'
   apiGateway:
     shouldStartNameWithService: true
+
+package:
+  individually: true
 
 plugins:
   - serverless-webpack

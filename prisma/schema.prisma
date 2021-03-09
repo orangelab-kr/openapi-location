@@ -12,7 +12,7 @@ generator clientModel {
 }
 
 model RegionModel {
-  regionId String @id @default(uuid())
+  regionId String  @id @default(uuid())
   enabled  Boolean @default(true)
   name     String
 
@@ -33,15 +33,15 @@ enum RegionGeofenceType {
 }
 
 model RegionGeofenceModel {
-  regionGeofenceId String @id @default(uuid())
-  enabled  Boolean @default(true)
+  regionGeofenceId String  @id @default(uuid())
+  enabled          Boolean @default(true)
 
   name    String
   geojson Json
 
-  type RegionGeofenceType
+  type     RegionGeofenceType
   regionId String
-  region   RegionModel @relation(fields: [regionId], references: [regionId])
+  region   RegionModel        @relation(fields: [regionId], references: [regionId])
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -53,12 +53,12 @@ model PricingModel {
   name      String
 
   standardPrice Int // 기본 이용 요금 
-  nightlyPrice Int // 기본 야간 요금
+  nightlyPrice  Int // 기본 야간 요금
   standardTime  Int // 기본 이용 제공(분)
 
   perMinuteStandardPrice Int // 기본 분당 요금
-  perMinuteNightlyPrice Int // 야간 분당 요금
-  penaltyPrice   Int // 패널티
+  perMinuteNightlyPrice  Int // 야간 분당 요금
+  penaltyPrice           Int // 패널티
 
   regions RegionModel[]
 
