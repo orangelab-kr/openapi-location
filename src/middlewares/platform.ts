@@ -21,12 +21,12 @@ export default function PlatformMiddleware(): Callback {
       const { headers } = req;
       const platformAccessKeyId = `${headers['x-hikick-platform-access-key-id']}`;
       const platformSecretAccessKey = `${headers['x-hikick-platform-secret-access-key']}`;
-      const platform = await platformClient.getPlatformFromAccessKey({
+      const accessKey = await platformClient.getPlatformFromAccessKey({
         platformAccessKeyId,
         platformSecretAccessKey,
       });
 
-      console.log(platform);
+      req.accessKey = accessKey;
       next();
     } catch (err) {
       throw new InternalError(
