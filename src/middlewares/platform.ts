@@ -1,6 +1,8 @@
-import { Callback, InternalError, OPCODE, Wrapper } from '../tools';
+import { Callback, Wrapper, logger } from '../tools';
 import {
+  InternalError,
   InternalPlatformClient,
+  OPCODE,
   PlatformPermission,
 } from 'openapi-internal-sdk';
 
@@ -15,7 +17,9 @@ const platformClient = new InternalPlatformClient({
 });
 
 platformClient.baseURL = process.env.HIKICK_OPENAPI_PLATFORM_URL || '';
-export default function PlatformMiddleware(): Callback {
+export default function PlatformMiddleware(
+  permissionIds: string[] = []
+): Callback {
   return Wrapper(async (req, res, next) => {
     try {
       const { headers } = req;
@@ -24,11 +28,17 @@ export default function PlatformMiddleware(): Callback {
       const accessKey = await platformClient.getPlatformFromAccessKey({
         platformAccessKeyId,
         platformSecretAccessKey,
+        permissionIds,
       });
 
       req.accessKey = accessKey;
       next();
     } catch (err) {
+      if (process.env.NODE_ENV === 'dev') {
+        logger.error(err.message);
+        logger.error(err.stack);
+      }
+
       throw new InternalError(
         '인증이 필요한 서비스입니다.',
         OPCODE.REQUIRED_INTERAL_LOGIN
