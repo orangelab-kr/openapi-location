@@ -1,9 +1,8 @@
-import { Joi, OPCODE, logger } from '../../tools';
-import Wrapper, { Callback } from '../../tools/wrapper';
-
-import InternalError from '../../tools/error';
 import jwt from 'jsonwebtoken';
 import moment from 'moment';
+import { Joi, logger, OPCODE } from '../../tools';
+import InternalError from '../../tools/error';
+import Wrapper, { Callback } from '../../tools/wrapper';
 
 export { default as InternalGeofenceMiddleware } from './geofence';
 export { default as InternalPricingMiddleware } from './pricing';
@@ -35,7 +34,7 @@ export default function InternalMiddleware(): Callback {
       const data = jwt.verify(token, key);
       const schema = Joi.object({
         sub: Joi.string().valid('openapi-location').required(),
-        iss: Joi.string().hostname().required(),
+        iss: Joi.string().required(),
         aud: Joi.string().email().required(),
         prs: Joi.array().items(Joi.string()).required(),
         iat: Joi.date().timestamp().required(),

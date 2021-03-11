@@ -5,9 +5,9 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const slsw = require('serverless-webpack');
 
 module.exports = {
+  mode: 'none',
   target: 'node',
   entry: slsw.lib.entries,
-  mode: 'none',
   externals: [nodeExternals()],
   resolve: {
     extensions: ['.ts', '.js'],
