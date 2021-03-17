@@ -18,7 +18,7 @@ export default function InternalMiddleware(): Callback {
     if (typeof token !== 'string') {
       throw new InternalError(
         '인증이 필요한 서비스입니다.',
-        OPCODE.REQUIRED_INTERAL_LOGIN
+        OPCODE.REQUIRED_INTERNAL_LOGIN
       );
     }
 
@@ -26,7 +26,7 @@ export default function InternalMiddleware(): Callback {
     if (!key || !token) {
       throw new InternalError(
         '인증이 필요한 서비스입니다.',
-        OPCODE.REQUIRED_INTERAL_LOGIN
+        OPCODE.REQUIRED_INTERNAL_LOGIN
       );
     }
 
@@ -60,7 +60,7 @@ export default function InternalMiddleware(): Callback {
     } catch (err) {
       throw new InternalError(
         '인증이 필요한 서비스입니다.',
-        OPCODE.REQUIRED_INTERAL_LOGIN
+        OPCODE.REQUIRED_INTERNAL_LOGIN
       );
     }
 
