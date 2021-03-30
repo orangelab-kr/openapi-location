@@ -25,11 +25,11 @@ export default function getRouter(): Application {
   router.use('/internal', InternalMiddleware(), getInternalRouter());
   router.use('/regions', PlatformMiddleware(), getRegionRouter());
   router.get(
-    '/type',
+    '/geofences',
     PlatformMiddleware(),
     Wrapper(async (req, res) => {
-      const type = await Geofence.getGeofenceTypeByLocation(req.query);
-      res.json({ opcode: OPCODE.SUCCESS, type });
+      const geofence = await Geofence.getGeofenceByLocation(req.query);
+      res.json({ opcode: OPCODE.SUCCESS, geofence });
     })
   );
 
@@ -48,7 +48,7 @@ export default function getRouter(): Application {
   router.all(
     '*',
     Wrapper(async () => {
-      throw new InternalError('Invalid API', 404);
+      throw new InternalError('Invalid API', OPCODE.NOT_FOUND);
     })
   );
 

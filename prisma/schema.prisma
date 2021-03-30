@@ -19,29 +19,25 @@ model RegionModel {
   pricingId String
   pricing   PricingModel @relation(fields: [pricingId], references: [pricingId])
 
-  geofences RegionGeofenceModel[]
+  geofences GeofenceModel[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 }
 
-enum RegionGeofenceType {
-  ALLOWED
-  DISALLOWED
-  NOT_OPERATED
-}
-
-model RegionGeofenceModel {
-  regionGeofenceId String  @id @default(uuid())
+model GeofenceModel {
+  geofenceId String  @id @default(uuid())
   enabled          Boolean @default(true)
 
   name    String
-  geojson Json
+  geojson Json 
 
-  type     RegionGeofenceType
   regionId String
-  region   RegionModel        @relation(fields: [regionId], references: [regionId])
+  region   RegionModel @relation(fields: [regionId], references: [regionId])
+
+  profileId String
+  profile   ProfileModel @relation(fields: [profileId], references: [profileId])
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -61,6 +57,23 @@ model PricingModel {
   surchargePrice         Int // 추가 금액
 
   regions RegionModel[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model ProfileModel {
+  profileId String @id @default(uuid())
+  name      String
+
+  priority     Int
+  speed        Int?
+  color        String
+  canReturn    Boolean
+  hasSurcharge Boolean
+
+  geofences GeofenceModel[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt

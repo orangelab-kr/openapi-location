@@ -25,7 +25,7 @@ export default function getInternalRegionsGeofencesRouter(): Router {
   );
 
   router.get(
-    '/:regionGeofenceId',
+    '/:geofenceId',
     InternalPermissionMiddleware(PERMISSION.GEOFENCES_VIEW),
     InternalGeofenceMiddleware(),
     Wrapper(async (req, res) => {
@@ -43,13 +43,13 @@ export default function getInternalRegionsGeofencesRouter(): Router {
         internal: { region },
       } = req;
 
-      const { regionGeofenceId } = await Geofence.createGeofence(region, body);
-      res.json({ opcode: OPCODE.SUCCESS, regionGeofenceId });
+      const { geofenceId } = await Geofence.createGeofence(region, body);
+      res.json({ opcode: OPCODE.SUCCESS, geofenceId });
     })
   );
 
   router.post(
-    '/:regionGeofenceId',
+    '/:geofenceId',
     InternalPermissionMiddleware(PERMISSION.GEOFENCES_MODIFY),
     InternalGeofenceMiddleware(),
     Wrapper(async (req, res) => {
@@ -64,7 +64,7 @@ export default function getInternalRegionsGeofencesRouter(): Router {
   );
 
   router.delete(
-    '/:regionGeofenceId',
+    '/:geofenceId',
     InternalPermissionMiddleware(PERMISSION.GEOFENCES_DELETE),
     InternalGeofenceMiddleware(),
     Wrapper(async (req, res) => {

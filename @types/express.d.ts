@@ -1,4 +1,4 @@
-import { PricingModel, RegionGeofenceModel, RegionModel } from '@prisma/client';
+import { GeofenceModel, PricingModel, RegionModel } from '@prisma/client';
 import 'express';
 import { InternalPlatformAccessKey } from 'openapi-internal-sdk';
 
@@ -15,7 +15,7 @@ declare global {
         exp: Date;
         pricing: PricingModel;
         region: RegionModel;
-        geofence: RegionGeofenceModel;
+        geofence: GeofenceModel;
       };
     }
   }

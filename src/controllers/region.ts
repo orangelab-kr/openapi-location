@@ -12,7 +12,7 @@ export default class Region {
   ): Promise<RegionModel[]> {
     const enabled = true;
     const regions = await prisma.regionModel.findMany({
-      include: { pricing: true, geofences: true },
+      include: { pricing: true, geofences: { include: { profile: true } } },
       where: { enabled, regionId, geofences: { some: { enabled } } },
     });
 
@@ -92,7 +92,7 @@ export default class Region {
   public static async getRegion(regionId: string): Promise<RegionModel | null> {
     const region = await prisma.regionModel.findFirst({
       where: { regionId },
-      include: { pricing: true, geofences: true },
+      include: { pricing: true, geofences: { include: { profile: true } } },
     });
 
     return region;
@@ -167,7 +167,7 @@ export default class Region {
   /** 지역을 삭제합니다. */
   public static async deleteRegion(region: RegionModel): Promise<void> {
     const { regionId } = region;
-    await prisma.regionGeofenceModel.deleteMany({ where: { regionId } });
+    await prisma.geofenceModel.deleteMany({ where: { regionId } });
     await prisma.regionModel.deleteMany({ where: { regionId } });
   }
 

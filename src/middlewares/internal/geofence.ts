@@ -7,10 +7,10 @@ export default function InternalGeofenceMiddleware(): Callback {
   return Wrapper(async (req, res, next) => {
     const {
       internal: { region },
-      params: { regionGeofenceId },
+      params: { geofenceId },
     } = req;
 
-    if (!regionGeofenceId) {
+    if (!geofenceId) {
       throw new InternalError(
         '해당 구역을 찾을 수 없습니다.',
         OPCODE.NOT_FOUND
@@ -19,7 +19,7 @@ export default function InternalGeofenceMiddleware(): Callback {
 
     req.internal.geofence = await Geofence.getGeofenceOrThrow(
       region,
-      regionGeofenceId
+      geofenceId
     );
 
     next();

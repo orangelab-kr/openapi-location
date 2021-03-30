@@ -1,6 +1,7 @@
 import {
-  RegionGeofenceModel,
-  RegionGeofenceType,
+  GeofenceModel,
+  PricingModel,
+  ProfileModel,
   RegionModel,
 } from '@prisma/client';
 
@@ -13,34 +14,47 @@ import PATTERN from '../tools/pattern';
 const { prisma } = Database;
 
 export default class Geofence {
-  public static async getGeofenceTypeByLocation(props: {
+  public static async getGeofenceByLocation(props: {
     lat?: number;
     lng?: number;
-  }): Promise<RegionGeofenceType> {
-    let type: RegionGeofenceType = 'NOT_OPERATED';
+  }): Promise<
+    GeofenceModel & {
+      profile: ProfileModel;
+      region: RegionModel & { pricing: PricingModel };
+    }
+  > {
     const { lat, lng } = await PATTERN.GEOFENCE.POINT.validateAsync(props);
 
-    const regionGeofences: RegionGeofenceModel[] = await prisma.$queryRaw(`
-      SELECT * FROM RegionGeofenceModel WHERE enabled = true
-      AND MBRContains(ST_GeomFromGeoJSON(geojson), GeomFromText("Point(${lng} ${lat})"));
-    `);
+    const res = await prisma.$queryRaw(`\
+    SELECT JSON_OBJECT('geofenceId', g.geofenceId, 'enabled', g.enabled, 'name', g.name,\
+    'geojson', JSON_UNQUOTE(g.geojson), 'regionId', g.regionId, 'profileId', g.profileId,\
+    'createdAt', g.createdAt, 'updatedAt', g.updatedAt, 'deletedAt', g.deletedAt,\
+    'profile', JSON_OBJECT('profileId', p.profileId, 'name', p.name, 'priority', p\
+    .priority, 'speed' , p.speed, 'color', p.color, 'canReturn', p.canReturn,\
+    'hasSurcharge', p.hasSurcharge, 'createdAt', p.createdAt, 'updatedAt', p.updatedAt,\
+    'deletedAt', p.deletedAt), 'region', JSON_OBJECT('regionId', r.regionId,\
+    'enabled', r.enabled, 'name', r.name, 'pricingId' , r.pricingId, 'createdAt'\
+    , r.createdAt, 'updatedAt', r.createdAt, 'pricing', JSON_OBJECT('pricingId', pc.pricingId,\
+    'name', pc.name, 'standardPrice', pc.standardPrice, 'nightlyPrice', pc.nightlyPrice,\
+    'standardTime', pc.standardTime, 'perMinuteStandardPrice', pc.standardPrice,\
+    'perMinuteNightlyPrice', pc.nightlyPrice, 'surchargePrice', pc.surchargePrice,\
+    'createdAt', pc.createdAt, 'updatedAt', pc.updatedAt, 'deletedAt', pc.deletedAt)\
+    )) as geofence FROM GeofenceModel AS g LEFT OUTER JOIN ProfileModel as p ON g.profileId\
+    = p.profileId LEFT OUTER JOIN RegionModel r on g.regionId = r.regionId LEFT\
+    OUTER JOIN PricingModel pc on r.pricingId = pc.pricingId WHERE r.enabled = true\
+    AND g.enabled = true AND MBRContains(ST_GeomFromGeoJSON(geojson),\
+    GeomFromText("Point(${lng} ${lat})")) ORDER BY p.priority DESC LIMIT 1;`);
 
-    const allowed = regionGeofences.find(
-      ({ type }) => type === RegionGeofenceType.ALLOWED
-    );
+    if (res.length <= 0) {
+      throw new InternalError('오류가 발생하였습니다.', OPCODE.ERROR);
+    }
 
-    const disallowed = regionGeofences.find(
-      ({ type }) => type === RegionGeofenceType.DISALLOWED
-    );
-
-    const notOperated = regionGeofences.find(
-      ({ type }) => type === RegionGeofenceType.NOT_OPERATED
-    );
-
-    if (allowed) type = 'ALLOWED';
-    if (disallowed) type = 'DISALLOWED';
-    if (notOperated) type = 'NOT_OPERATED';
-    return type;
+    const geofence: GeofenceModel & {
+      profile: ProfileModel;
+      region: RegionModel & { pricing: PricingModel };
+    } = JSON.parse(res[0].geofence);
+    geofence.geojson = JSON.parse(String(geofence.geojson));
+    return geofence;
   }
 
   /** 모든 구역 조회 */
@@ -53,7 +67,7 @@ export default class Geofence {
       orderByField?: 'name' | 'createdAt';
       orderBySort?: 'asc' | 'desc';
     }
-  ): Promise<{ total: number; geofences: RegionGeofenceModel[] }> {
+  ): Promise<{ total: number; geofences: GeofenceModel[] }> {
     const schema = await Joi.object({
       take: PATTERN.PAGINATION.TAKE,
       skip: PATTERN.PAGINATION.SKIP,
@@ -75,12 +89,14 @@ export default class Geofence {
     const { regionId } = region;
     const where = { regionId, name: { contains: search } };
     const orderBy = { [orderByField]: orderBySort };
+    const include = { profile: true };
     const [total, geofences] = await prisma.$transaction([
-      prisma.regionGeofenceModel.count({ where }),
-      prisma.regionGeofenceModel.findMany({
+      prisma.geofenceModel.count({ where }),
+      prisma.geofenceModel.findMany({
         take,
         skip,
         where,
+        include,
         orderBy,
       }),
     ]);
@@ -91,33 +107,34 @@ export default class Geofence {
   /** 구역을 가져옵니다. 없을 경우 오류를 발생시킵니다. */
   public static async getGeofenceOrThrow(
     region: RegionModel,
-    regionGeofenceId: string
-  ): Promise<RegionGeofenceModel> {
-    const regionGeofence = await Geofence.getGeofence(region, regionGeofenceId);
-    if (!regionGeofence) {
+    geofenceId: string
+  ): Promise<GeofenceModel> {
+    const geofence = await Geofence.getGeofence(region, geofenceId);
+    if (!geofence) {
       throw new InternalError(
         '해당 구역을 찾을 수 없습니다.',
         OPCODE.NOT_FOUND
       );
     }
 
-    return regionGeofence;
+    return geofence;
   }
 
   /** 구역을 가져옵니다. */
   public static async getGeofence(
     region: RegionModel,
-    regionGeofenceId: string
-  ): Promise<RegionGeofenceModel | null> {
+    geofenceId: string
+  ): Promise<GeofenceModel | null> {
     const { regionId } = region;
-    const regionGeofence = await prisma.regionGeofenceModel.findFirst({
+    const geofence = await prisma.geofenceModel.findFirst({
+      include: { profile: true },
       where: {
-        regionGeofenceId,
+        geofenceId,
         region: { regionId },
       },
     });
 
-    return regionGeofence;
+    return geofence;
   }
 
   /** 구역을 생성합니다. */
@@ -126,18 +143,21 @@ export default class Geofence {
     props: {
       name: string;
       enabled: boolean;
-      type: RegionGeofenceType;
+      profileId: string;
       geojson: { type: 'Polygon'; coordinates: [[number, number]][][] };
     }
-  ): Promise<RegionGeofenceModel> {
+  ): Promise<GeofenceModel> {
     const schema = Joi.object({
       name: PATTERN.GEOFENCE.NAME,
       enabled: PATTERN.GEOFENCE.ENABLED,
-      type: PATTERN.GEOFENCE.TYPE,
+      profileId: PATTERN.PROFILE.ID,
       geojson: PATTERN.GEOFENCE.GEOJSON,
     });
 
-    const { name, enabled, type, geojson } = await schema.validateAsync(props);
+    const { name, enabled, profileId, geojson } = await schema.validateAsync(
+      props
+    );
+
     const exists = await Geofence.getGeofenceByName(region, name);
     if (exists) {
       throw new InternalError(
@@ -147,33 +167,42 @@ export default class Geofence {
     }
 
     const { regionId } = region;
-    const regionGeofence = await prisma.regionGeofenceModel.create({
-      data: { name, type, enabled, geojson, region: { connect: { regionId } } },
+    const geofence = await prisma.geofenceModel.create({
+      data: {
+        name,
+        enabled,
+        geojson,
+        profile: { connect: { profileId } },
+        region: { connect: { regionId } },
+      },
     });
 
-    return regionGeofence;
+    return geofence;
   }
 
   /** 구역을 수정합니다. */
   public static async modifyGeofence(
     region: RegionModel,
-    regionGeofence: RegionGeofenceModel,
+    geofence: GeofenceModel,
     props: {
       name?: string;
       enabled?: boolean;
-      type?: RegionGeofenceType;
+      profileId?: string;
       geojson?: { type: 'Polygon'; coordinates: [[number, number]][][] };
     }
   ): Promise<void> {
     const schema = Joi.object({
       name: PATTERN.GEOFENCE.NAME.optional(),
       enabled: PATTERN.GEOFENCE.ENABLED.optional(),
-      type: PATTERN.GEOFENCE.TYPE.optional(),
+      type: PATTERN.PROFILE.ID.optional(),
       geojson: PATTERN.GEOFENCE.GEOJSON.optional(),
     });
 
-    const { name, enabled, type, geojson } = await schema.validateAsync(props);
-    if (name && name !== regionGeofence.name) {
+    const { name, enabled, profileId, geojson } = await schema.validateAsync(
+      props
+    );
+
+    if (name && name !== geofence.name) {
       const exists = await Geofence.getGeofenceByName(region, name);
       if (exists) {
         throw new InternalError(
@@ -184,22 +213,22 @@ export default class Geofence {
     }
 
     const { regionId } = region;
-    const { regionGeofenceId } = regionGeofence;
-    await prisma.regionGeofenceModel.updateMany({
-      where: { regionGeofenceId, region: { regionId } },
-      data: { name, type, enabled, geojson },
+    const { geofenceId } = geofence;
+    await prisma.geofenceModel.updateMany({
+      where: { geofenceId, region: { regionId } },
+      data: { name, profileId, enabled, geojson },
     });
   }
 
   /** 구역을 삭제합니다. */
   public static async deleteGeofence(
     region: RegionModel,
-    regionGeofence: RegionGeofenceModel
+    geofence: GeofenceModel
   ): Promise<void> {
     const { regionId } = region;
-    const { regionGeofenceId } = regionGeofence;
-    await prisma.regionGeofenceModel.deleteMany({
-      where: { regionGeofenceId, region: { regionId } },
+    const { geofenceId } = geofence;
+    await prisma.geofenceModel.deleteMany({
+      where: { geofenceId, region: { regionId } },
     });
   }
 
@@ -207,12 +236,13 @@ export default class Geofence {
   public static async getGeofenceByName(
     region: RegionModel,
     name: string
-  ): Promise<RegionGeofenceModel | null> {
+  ): Promise<GeofenceModel | null> {
     const { regionId } = region;
-    const regionGeofence = await prisma.regionGeofenceModel.findFirst({
+    const geofence = await prisma.geofenceModel.findFirst({
       where: { name, region: { regionId } },
+      include: { profile: true },
     });
 
-    return regionGeofence;
+    return geofence;
   }
 }

@@ -14,11 +14,11 @@ export default function getInternalRouter(): Router {
   router.use('/regions', getInternalRegionsRouter());
   router.use('/pricings', getInternalPricingsRouter());
   router.get(
-    '/type',
-    InternalPermissionMiddleware(PERMISSION.GEOFENCES_TYPE),
+    '/geofences',
+    InternalPermissionMiddleware(PERMISSION.GEOFENCES_LOCATION),
     Wrapper(async (req, res) => {
-      const type = await Geofence.getGeofenceTypeByLocation(req.query);
-      res.json({ opcode: OPCODE.SUCCESS, type });
+      const geofence = await Geofence.getGeofenceByLocation(req.query);
+      res.json({ opcode: OPCODE.SUCCESS, geofence });
     })
   );
 

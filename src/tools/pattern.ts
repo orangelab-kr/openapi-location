@@ -1,5 +1,4 @@
 import Joi from './joi';
-import { RegionGeofenceType } from '@prisma/client';
 
 const PATTERN = {
   PAGINATION: {
@@ -26,6 +25,9 @@ const PATTERN = {
     ENABLED: Joi.boolean().required(),
     NAME: Joi.string().min(2).max(16).required(),
   },
+  PROFILE: {
+    ID: Joi.string().uuid().required(),
+  },
   GEOFENCE: {
     POINT: Joi.object({
       lat: Joi.number().min(-90).max(90).required(),
@@ -34,9 +36,6 @@ const PATTERN = {
     ID: Joi.string().uuid().required(),
     ENABLED: Joi.boolean().required(),
     NAME: Joi.string().min(2).max(16).required(),
-    TYPE: Joi.string()
-      .valid(...Object.keys(RegionGeofenceType))
-      .required(),
     GEOJSON: Joi.object({
       type: Joi.string().valid('Polygon').required(),
       coordinates: Joi.array()
