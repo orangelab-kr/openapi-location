@@ -16,7 +16,7 @@ export default class Pricing {
     search?: string;
     orderByField?: 'name' | 'createdAt';
     orderBySort?: 'asc' | 'desc';
-  }): Promise<{ total: number; pricings: Pricing[] }> {
+  }): Promise<{ total: number; pricings: PricingModel[] }> {
     const schema = await Joi.object({
       take: PATTERN.PAGINATION.TAKE,
       skip: PATTERN.PAGINATION.SKIP,

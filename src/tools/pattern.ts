@@ -27,6 +27,14 @@ const PATTERN = {
   },
   PROFILE: {
     ID: Joi.string().uuid().required(),
+    NAME: Joi.string().min(2).max(16).required(),
+    PRIORITY: Joi.number().required(),
+    SPEED: Joi.number().min(5).max(50).allow(null).optional(),
+    COLOR: Joi.string()
+      .regex(/^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/)
+      .required(),
+    CAN_RETURN: Joi.boolean().required(),
+    HAS_SURCHARGE: Joi.boolean().required(),
   },
   GEOFENCE: {
     POINT: Joi.object({

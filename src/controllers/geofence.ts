@@ -26,24 +26,24 @@ export default class Geofence {
     const { lat, lng } = await PATTERN.GEOFENCE.POINT.validateAsync(props);
 
     const res = await prisma.$queryRaw(`\
-    SELECT JSON_OBJECT('geofenceId', g.geofenceId, 'enabled', g.enabled, 'name', g.name,\
-    'geojson', JSON_UNQUOTE(g.geojson), 'regionId', g.regionId, 'profileId', g.profileId,\
-    'createdAt', g.createdAt, 'updatedAt', g.updatedAt, 'deletedAt', g.deletedAt,\
-    'profile', JSON_OBJECT('profileId', p.profileId, 'name', p.name, 'priority', p\
-    .priority, 'speed' , p.speed, 'color', p.color, 'canReturn', p.canReturn,\
-    'hasSurcharge', p.hasSurcharge, 'createdAt', p.createdAt, 'updatedAt', p.updatedAt,\
-    'deletedAt', p.deletedAt), 'region', JSON_OBJECT('regionId', r.regionId,\
-    'enabled', r.enabled, 'name', r.name, 'pricingId' , r.pricingId, 'createdAt'\
-    , r.createdAt, 'updatedAt', r.createdAt, 'pricing', JSON_OBJECT('pricingId', pc.pricingId,\
-    'name', pc.name, 'standardPrice', pc.standardPrice, 'nightlyPrice', pc.nightlyPrice,\
-    'standardTime', pc.standardTime, 'perMinuteStandardPrice', pc.standardPrice,\
-    'perMinuteNightlyPrice', pc.nightlyPrice, 'surchargePrice', pc.surchargePrice,\
-    'createdAt', pc.createdAt, 'updatedAt', pc.updatedAt, 'deletedAt', pc.deletedAt)\
-    )) as geofence FROM GeofenceModel AS g LEFT OUTER JOIN ProfileModel as p ON g.profileId\
-    = p.profileId LEFT OUTER JOIN RegionModel r on g.regionId = r.regionId LEFT\
-    OUTER JOIN PricingModel pc on r.pricingId = pc.pricingId WHERE r.enabled = true\
-    AND g.enabled = true AND MBRContains(ST_GeomFromGeoJSON(geojson),\
-    GeomFromText("Point(${lng} ${lat})")) ORDER BY p.priority DESC LIMIT 1;`);
+SELECT JSON_OBJECT('geofenceId', g.geofenceId, 'enabled', g.enabled, 'name', g.name,
+'geojson', JSON_UNQUOTE(g.geojson), 'regionId', g.regionId, 'profileId', g.profileId,
+'createdAt', g.createdAt, 'updatedAt', g.updatedAt, 'deletedAt', g.deletedAt,
+'profile', JSON_OBJECT('profileId', p.profileId, 'name', p.name, 'priority', p
+.priority, 'speed' , p.speed, 'color', p.color, 'canReturn', p.canReturn,
+'hasSurcharge', IF(p.hasSurcharge = '1', TRUE, FALSE), 'createdAt', p.createdAt,
+'updatedAt', p.updatedAt, 'deletedAt', p.deletedAt), 'region', JSON_OBJECT('regionId', r.regionId,
+'enabled', r.enabled, 'name', r.name, 'pricingId' , r.pricingId, 'createdAt'
+, r.createdAt, 'updatedAt', r.createdAt, 'pricing', JSON_OBJECT('pricingId', pc.pricingId,
+'name', pc.name, 'standardPrice', pc.standardPrice, 'nightlyPrice', pc.nightlyPrice,
+'standardTime', pc.standardTime, 'perMinuteStandardPrice', pc.standardPrice,
+'perMinuteNightlyPrice', pc.nightlyPrice, 'surchargePrice', pc.surchargePrice,
+'createdAt', pc.createdAt, 'updatedAt', pc.updatedAt, 'deletedAt', pc.deletedAt)
+)) as geofence FROM GeofenceModel AS g LEFT OUTER JOIN ProfileModel as p ON g.profileId
+= p.profileId LEFT OUTER JOIN RegionModel r on g.regionId = r.regionId LEFT
+OUTER JOIN PricingModel pc on r.pricingId = pc.pricingId WHERE r.enabled = true
+AND g.enabled = true AND MBRContains(ST_GeomFromGeoJSON(geojson),
+GeomFromText("Point(${lng} ${lat})")) ORDER BY p.priority DESC LIMIT 1;`);
 
     if (res.length <= 0) {
       throw new InternalError('오류가 발생하였습니다.', OPCODE.ERROR);

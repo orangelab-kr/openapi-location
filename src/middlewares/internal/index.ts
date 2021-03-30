@@ -1,8 +1,9 @@
+import { Joi, OPCODE, logger } from '../../tools';
+import Wrapper, { Callback } from '../../tools/wrapper';
+
+import InternalError from '../../tools/error';
 import jwt from 'jsonwebtoken';
 import moment from 'moment';
-import { Joi, logger, OPCODE } from '../../tools';
-import InternalError from '../../tools/error';
-import Wrapper, { Callback } from '../../tools/wrapper';
 
 export { default as InternalGeofenceMiddleware } from './geofence';
 export { default as InternalPricingMiddleware } from './pricing';
@@ -36,7 +37,7 @@ export default function InternalMiddleware(): Callback {
         sub: Joi.string().valid('openapi-location').required(),
         iss: Joi.string().required(),
         aud: Joi.string().email().required(),
-        prs: Joi.array().items(Joi.string()).required(),
+        prs: Joi.string().required(),
         iat: Joi.date().timestamp().required(),
         exp: Joi.date().timestamp().required(),
       });
@@ -58,6 +59,11 @@ export default function InternalMiddleware(): Callback {
         `[Internal] [${payload.iss}] ${payload.aud} - ${req.method} ${req.originalUrl}`
       );
     } catch (err) {
+      if (process.env.NODE_ENV === 'dev') {
+        logger.error(err.message);
+        logger.error(err.stack);
+      }
+
       throw new InternalError(
         '인증이 필요한 서비스입니다.',
         OPCODE.REQUIRED_INTERNAL_LOGIN

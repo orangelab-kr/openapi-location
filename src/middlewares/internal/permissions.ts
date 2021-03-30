@@ -22,6 +22,12 @@ export enum PERMISSION {
   PRICINGS_CREATE,
   PRICINGS_MODIFY,
   PRICINGS_DELETE,
+
+  PROFILES_LIST,
+  PROFILES_VIEW,
+  PROFILES_CREATE,
+  PROFILES_MODIFY,
+  PROFILES_DELETE,
 }
 
 export default function InternalPermissionMiddleware(
