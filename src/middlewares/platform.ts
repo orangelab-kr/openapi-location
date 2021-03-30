@@ -1,6 +1,5 @@
-import { Callback, Wrapper, logger } from '../tools';
+import { Callback, InternalError, Wrapper, logger } from '../tools';
 import {
-  InternalError,
   InternalPlatformClient,
   OPCODE,
   PlatformPermission,
@@ -19,7 +18,6 @@ export default function PlatformMiddleware(
     permissions: [PlatformPermission.ACCESS_KEYS_AUTHORIZE],
   });
 
-  platformClient.baseURL = process.env.HIKICK_OPENAPI_PLATFORM_URL || '';
   return Wrapper(async (req, res, next) => {
     try {
       const { headers } = req;
