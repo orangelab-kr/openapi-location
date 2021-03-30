@@ -19,7 +19,7 @@ const PATTERN = {
     STANDARD_TIME: Joi.number().required(),
     PER_MINUTE_STANDARD_PRICE: Joi.number().required(),
     PER_MINUTE_NIGHTLY_PRICE: Joi.number().required(),
-    PENALTY_PRICE: Joi.number().required(),
+    SURCHARGE_PRICE: Joi.number().required(),
   },
   REGION: {
     ID: Joi.string().uuid().required(),

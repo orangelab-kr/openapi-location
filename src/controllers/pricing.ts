@@ -85,7 +85,7 @@ export default class Pricing {
     standardTime: number;
     perMinuteStandardPrice: number;
     perMinuteNightlyPrice: number;
-    penaltyPrice: number;
+    surchargePrice: number;
   }): Promise<PricingModel> {
     const schema = Joi.object({
       name: PATTERN.PRICING.NAME,
@@ -94,7 +94,7 @@ export default class Pricing {
       standardTime: PATTERN.PRICING.STANDARD_TIME,
       perMinuteStandardPrice: PATTERN.PRICING.PER_MINUTE_STANDARD_PRICE,
       perMinuteNightlyPrice: PATTERN.PRICING.PER_MINUTE_NIGHTLY_PRICE,
-      penaltyPrice: PATTERN.PRICING.PENALTY_PRICE,
+      surchargePrice: PATTERN.PRICING.SURCHARGE_PRICE,
     });
 
     const {
@@ -104,7 +104,7 @@ export default class Pricing {
       standardTime,
       perMinuteStandardPrice,
       perMinuteNightlyPrice,
-      penaltyPrice,
+      surchargePrice,
     } = await schema.validateAsync(props);
     const exists = await Pricing.getPricingByName(name);
     if (exists) {
@@ -122,7 +122,7 @@ export default class Pricing {
         standardTime,
         perMinuteStandardPrice,
         perMinuteNightlyPrice,
-        penaltyPrice,
+        surchargePrice,
       },
     });
 
@@ -139,7 +139,7 @@ export default class Pricing {
       standardTime: number;
       perMinuteStandardPrice: number;
       perMinuteNightlyPrice: number;
-      penaltyPrice: number;
+      surchargePrice: number;
     }
   ): Promise<void> {
     const schema = Joi.object({
@@ -149,7 +149,7 @@ export default class Pricing {
       standardTime: PATTERN.PRICING.STANDARD_TIME.optional(),
       perMinuteStandardPrice: PATTERN.PRICING.PER_MINUTE_STANDARD_PRICE.optional(),
       perMinuteNightlyPrice: PATTERN.PRICING.PER_MINUTE_NIGHTLY_PRICE.optional(),
-      penaltyPrice: PATTERN.PRICING.PENALTY_PRICE.optional(),
+      surchargePrice: PATTERN.PRICING.SURCHARGE_PRICE.optional(),
     });
 
     const {
@@ -159,7 +159,7 @@ export default class Pricing {
       standardTime,
       perMinuteStandardPrice,
       perMinuteNightlyPrice,
-      penaltyPrice,
+      surchargePrice,
     } = await schema.validateAsync(props);
     if (name && pricing.name !== name) {
       const exists = await Pricing.getPricingByName(name);
@@ -181,7 +181,7 @@ export default class Pricing {
         standardTime,
         perMinuteStandardPrice,
         perMinuteNightlyPrice,
-        penaltyPrice,
+        surchargePrice,
       },
     });
   }

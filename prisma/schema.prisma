@@ -58,7 +58,7 @@ model PricingModel {
 
   perMinuteStandardPrice Int // 기본 분당 요금
   perMinuteNightlyPrice  Int // 야간 분당 요금
-  penaltyPrice           Int // 패널티
+  surchargePrice         Int // 추가 금액
 
   regions RegionModel[]
 
