@@ -28,6 +28,6 @@ module.exports = {
     path: path.resolve(__dirname, '.webpack'),
   },
   optimization: {
-    concatenateModules: true,
+    concatenateModules: false,
   },
 };
