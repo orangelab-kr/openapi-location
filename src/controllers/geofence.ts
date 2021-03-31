@@ -30,7 +30,7 @@ SELECT JSON_OBJECT('geofenceId', g.geofenceId, 'enabled', g.enabled, 'name', g.n
 'geojson', JSON_UNQUOTE(g.geojson), 'regionId', g.regionId, 'profileId', g.profileId,
 'createdAt', g.createdAt, 'updatedAt', g.updatedAt, 'deletedAt', g.deletedAt,
 'profile', JSON_OBJECT('profileId', p.profileId, 'name', p.name, 'priority', p
-.priority, 'speed' , p.speed, 'color', p.color, 'canReturn', p.canReturn,
+.priority, 'speed' , p.speed, 'color', p.color, 'canReturn', IF(p.canReturn = '1', TRUE, FALSE),
 'hasSurcharge', IF(p.hasSurcharge = '1', TRUE, FALSE), 'createdAt', p.createdAt,
 'updatedAt', p.updatedAt, 'deletedAt', p.deletedAt), 'region', JSON_OBJECT('regionId', r.regionId,
 'enabled', r.enabled, 'name', r.name, 'pricingId' , r.pricingId, 'createdAt'
