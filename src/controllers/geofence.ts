@@ -10,6 +10,7 @@ import InternalError from '../tools/error';
 import Joi from '../tools/joi';
 import OPCODE from '../tools/opcode';
 import PATTERN from '../tools/pattern';
+import Region from './region';
 
 const { prisma } = Database;
 
@@ -188,20 +189,25 @@ GeomFromText("Point(${lng} ${lat})")) ORDER BY p.priority DESC LIMIT 1;`);
       name?: string;
       enabled?: boolean;
       profileId?: string;
+      regionId?: string;
       geojson?: { type: 'Polygon'; coordinates: [[number, number]][][] };
     }
   ): Promise<void> {
     const schema = Joi.object({
       name: PATTERN.GEOFENCE.NAME.optional(),
       enabled: PATTERN.GEOFENCE.ENABLED.optional(),
-      type: PATTERN.PROFILE.ID.optional(),
+      profileId: PATTERN.PROFILE.ID.optional(),
+      regionId: PATTERN.REGION.ID.optional(),
       geojson: PATTERN.GEOFENCE.GEOJSON.optional(),
     });
 
-    const { name, enabled, profileId, geojson } = await schema.validateAsync(
-      props
-    );
-
+    const {
+      name,
+      enabled,
+      profileId,
+      regionId,
+      geojson,
+    } = await schema.validateAsync(props);
     if (name && name !== geofence.name) {
       const exists = await Geofence.getGeofenceByName(region, name);
       if (exists) {
@@ -212,11 +218,14 @@ GeomFromText("Point(${lng} ${lat})")) ORDER BY p.priority DESC LIMIT 1;`);
       }
     }
 
-    const { regionId } = region;
+    if (regionId && regionId !== geofence.regionId) {
+      await Region.getRegionOrThrow(regionId);
+    }
+
     const { geofenceId } = geofence;
     await prisma.geofenceModel.updateMany({
-      where: { geofenceId, region: { regionId } },
-      data: { name, profileId, enabled, geojson },
+      where: { geofenceId },
+      data: { name, profileId, enabled, regionId, geojson },
     });
   }
 
