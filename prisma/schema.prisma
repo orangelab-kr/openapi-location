@@ -6,7 +6,7 @@ datasource dbModel {
   url      = env("DATABASE_URL")
 }
 
-generator clientModel {
+generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native", "rhel-openssl-1.0.x"]
 }
@@ -28,10 +28,10 @@ model RegionModel {
 
 model GeofenceModel {
   geofenceId String  @id @default(uuid())
-  enabled          Boolean @default(true)
+  enabled    Boolean @default(true)
 
   name    String
-  geojson Json 
+  geojson Json
 
   regionId String
   region   RegionModel @relation(fields: [regionId], references: [regionId])
