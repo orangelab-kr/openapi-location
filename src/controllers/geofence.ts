@@ -37,8 +37,8 @@ SELECT JSON_OBJECT('geofenceId', g.geofenceId, 'enabled', g.enabled, 'name', g.n
 'enabled', r.enabled, 'name', r.name, 'pricingId' , r.pricingId, 'createdAt'
 , r.createdAt, 'updatedAt', r.createdAt, 'pricing', JSON_OBJECT('pricingId', pc.pricingId,
 'name', pc.name, 'standardPrice', pc.standardPrice, 'nightlyPrice', pc.nightlyPrice,
-'standardTime', pc.standardTime, 'perMinuteStandardPrice', pc.standardPrice,
-'perMinuteNightlyPrice', pc.nightlyPrice, 'surchargePrice', pc.surchargePrice,
+'standardTime', pc.standardTime, 'perMinuteStandardPrice', pc.perMinuteStandardPrice,
+'perMinuteNightlyPrice', pc.perMinuteNightlyPrice, 'surchargePrice', pc.surchargePrice,
 'createdAt', pc.createdAt, 'updatedAt', pc.updatedAt, 'deletedAt', pc.deletedAt)
 )) as geofence FROM GeofenceModel AS g LEFT OUTER JOIN ProfileModel as p ON g.profileId
 = p.profileId LEFT OUTER JOIN RegionModel r on g.regionId = r.regionId LEFT
