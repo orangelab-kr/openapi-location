@@ -6,3 +6,4 @@ export { default as OPCODE } from './opcode';
 export { default as PATTERN } from './pattern';
 export * from './wrapper';
 export { default as Wrapper } from './wrapper';
+export { default as InternalClient } from './internalClient';
