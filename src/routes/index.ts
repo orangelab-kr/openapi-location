@@ -6,6 +6,7 @@ import InternalMiddleware from '../middlewares/internal';
 import OPCODE from '../tools/opcode';
 import { PlatformMiddleware } from '../middlewares';
 import Wrapper from '../tools/wrapper';
+import cors from 'cors';
 import getInternalRouter from './internal';
 import getRegionRouter from './regions';
 import logger from '../tools/logger';
@@ -19,6 +20,7 @@ export default function getRouter(): Application {
     stream: { write: (str: string) => logger.info(`${str.trim()}`) },
   });
 
+  router.use(cors());
   router.use(logging);
   router.use(express.json());
   router.use(express.urlencoded({ extended: true }));
