@@ -1,6 +1,11 @@
-import Database from './tools/database';
-import getRouter from './routes';
+import { Database, getRouter } from '.';
+
 import serverless from 'serverless-http';
+
+export * from './controllers';
+export * from './middlewares';
+export * from './routes';
+export * from './tools';
 
 Database.initPrisma();
 const options = { basePath: '/v1/location' };

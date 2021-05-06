@@ -1,9 +1,6 @@
-import { InternalError, OPCODE } from '../../tools';
-import Wrapper, { Callback } from '../../tools/wrapper';
+import { Callback, InternalError, OPCODE, Region, Wrapper } from '../..';
 
-import Region from '../../controllers/region';
-
-export default function InternalRegionMiddleware(): Callback {
+export function InternalRegionMiddleware(): Callback {
   return Wrapper(async (req, res, next) => {
     const {
       params: { regionId },

@@ -1,14 +1,11 @@
+import { InternalError, Joi, OPCODE, PATTERN } from '..';
 import { Prisma, ProfileModel } from '@prisma/client';
 
-import Database from '../tools/database';
-import InternalError from '../tools/error';
-import Joi from '../tools/joi';
-import OPCODE from '../tools/opcode';
-import PATTERN from '../tools/pattern';
+import { Database } from '../tools';
 
 const { prisma } = Database;
 
-export default class Profile {
+export class Profile {
   /** 프로파일 목록 조회 */
   public static async getProfiles(props: {
     take?: number;

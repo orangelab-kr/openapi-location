@@ -1,14 +1,15 @@
-import InternalPermissionMiddleware, {
+import {
+  InternalPermissionMiddleware,
+  InternalPricingMiddleware,
+  OPCODE,
   PERMISSION,
-} from '../../middlewares/internal/permissions';
+  Pricing,
+  Wrapper,
+} from '../..';
 
-import InternalPricingMiddleware from '../../middlewares/internal/pricing';
-import OPCODE from '../../tools/opcode';
-import Pricing from '../../controllers/pricing';
 import { Router } from 'express';
-import { Wrapper } from '../../tools';
 
-export default function getInternalPricingsRouter(): Router {
+export function getInternalPricingsRouter(): Router {
   const router = Router();
 
   router.get(

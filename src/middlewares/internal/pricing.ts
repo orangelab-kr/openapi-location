@@ -1,9 +1,6 @@
-import { InternalError, OPCODE } from '../../tools';
-import Wrapper, { Callback } from '../../tools/wrapper';
+import { Callback, InternalError, OPCODE, Pricing, Wrapper } from '../..';
 
-import Pricing from '../../controllers/pricing';
-
-export default function InternalPricingMiddleware(): Callback {
+export function InternalPricingMiddleware(): Callback {
   return Wrapper(async (req, res, next) => {
     const {
       params: { pricingId },

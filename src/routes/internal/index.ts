@@ -1,15 +1,21 @@
-import InternalPermissionMiddleware, {
+import {
+  Geofence,
+  InternalPermissionMiddleware,
+  OPCODE,
   PERMISSION,
-} from '../../middlewares/internal/permissions';
-import { OPCODE, Wrapper } from '../../tools';
+  Wrapper,
+  getInternalPricingsRouter,
+  getInternalProfilesRouter,
+  getInternalRegionsRouter,
+} from '../..';
 
-import Geofence from '../../controllers/geofence';
 import { Router } from 'express';
-import getInternalPricingsRouter from './pricings';
-import getInternalProfilesRouter from './profiles';
-import getInternalRegionsRouter from './regions';
 
-export default function getInternalRouter(): Router {
+export * from './pricings';
+export * from './profiles';
+export * from './regions';
+
+export function getInternalRouter(): Router {
   const router = Router();
 
   router.use('/regions', getInternalRegionsRouter());

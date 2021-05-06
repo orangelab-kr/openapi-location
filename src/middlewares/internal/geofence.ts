@@ -1,9 +1,6 @@
-import { InternalError, OPCODE } from '../../tools';
-import Wrapper, { Callback } from '../../tools/wrapper';
+import { Callback, Geofence, InternalError, OPCODE, Wrapper } from '../..';
 
-import Geofence from '../../controllers/geofence';
-
-export default function InternalGeofenceMiddleware(): Callback {
+export function InternalGeofenceMiddleware(): Callback {
   return Wrapper(async (req, res, next) => {
     const {
       internal: { region },

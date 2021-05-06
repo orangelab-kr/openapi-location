@@ -1,11 +1,11 @@
-import { Database, InternalError, Joi, OPCODE, PATTERN } from '../tools';
+import { InternalError, Joi, OPCODE, PATTERN, Pricing } from '..';
 import { Prisma, RegionModel } from '@prisma/client';
 
-import Pricing from './pricing';
+import { Database } from '../tools';
 
 const { prisma } = Database;
 
-export default class Region {
+export class Region {
   /** 지역에 따른 모든 Geofence 를 가져옵니다. */
   public static async getRegionsForUser(
     regionId?: string

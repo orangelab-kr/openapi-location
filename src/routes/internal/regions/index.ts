@@ -1,14 +1,18 @@
-import InternalPermissionMiddleware, {
+import {
+  InternalPermissionMiddleware,
+  InternalRegionMiddleware,
+  OPCODE,
   PERMISSION,
-} from '../../../middlewares/internal/permissions';
-import { OPCODE, Wrapper } from '../../../tools';
+  Region,
+  Wrapper,
+  getInternalRegionsGeofencesRouter,
+} from '../../..';
 
-import { InternalRegionMiddleware } from '../../../middlewares';
-import Region from '../../../controllers/region';
 import { Router } from 'express';
-import getInternalRegionsGeofencesRouter from './geofences';
 
-export default function getInternalRegionsRouter(): Router {
+export * from './geofences';
+
+export function getInternalRegionsRouter(): Router {
   const router = Router();
 
   router.use(

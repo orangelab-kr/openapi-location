@@ -1,14 +1,15 @@
-import InternalPermissionMiddleware, {
+import {
+  InternalPermissionMiddleware,
+  InternalProfileMiddleware,
+  OPCODE,
   PERMISSION,
-} from '../../middlewares/internal/permissions';
+  Profile,
+  Wrapper,
+} from '../..';
 
-import InternalProfileMiddleware from '../../middlewares/internal/profile';
-import OPCODE from '../../tools/opcode';
-import Profile from '../../controllers/profile';
 import { Router } from 'express';
-import { Wrapper } from '../../tools';
 
-export default function getInternalProfilesRouter(): Router {
+export function getInternalProfilesRouter(): Router {
   const router = Router();
 
   router.get(

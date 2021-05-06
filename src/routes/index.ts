@@ -1,19 +1,24 @@
+import {
+  Geofence,
+  InternalError,
+  InternalMiddleware,
+  OPCODE,
+  PlatformMiddleware,
+  Wrapper,
+  getInternalRouter,
+  getRegionRouter,
+  logger,
+} from '..';
 import express, { Application } from 'express';
 
-import Geofence from '../controllers/geofence';
-import InternalError from '../tools/error';
-import InternalMiddleware from '../middlewares/internal';
-import OPCODE from '../tools/opcode';
-import { PlatformMiddleware } from '../middlewares';
-import Wrapper from '../tools/wrapper';
 import cors from 'cors';
-import getInternalRouter from './internal';
-import getRegionRouter from './regions';
-import logger from '../tools/logger';
 import morgan from 'morgan';
 import os from 'os';
 
-export default function getRouter(): Application {
+export * from './internal';
+export * from './regions';
+
+export function getRouter(): Application {
   const router = express();
   const hostname = os.hostname();
   const logging = morgan('common', {

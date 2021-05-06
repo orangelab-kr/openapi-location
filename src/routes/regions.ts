@@ -1,9 +1,8 @@
-import { OPCODE, Wrapper } from '../tools';
+import { OPCODE, Region, Wrapper } from '..';
 
-import Region from '../controllers/region';
 import { Router } from 'express';
 
-export default function getRegionRouter(): Router {
+export function getRegionRouter(): Router {
   const router = Router();
 
   router.get(

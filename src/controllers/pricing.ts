@@ -1,14 +1,11 @@
+import { InternalError, Joi, OPCODE, PATTERN } from '..';
 import { PricingModel, Prisma } from '@prisma/client';
 
-import Database from '../tools/database';
-import InternalError from '../tools/error';
-import Joi from '../tools/joi';
-import OPCODE from '../tools/opcode';
-import PATTERN from '../tools/pattern';
+import { Database } from '../tools';
 
 const { prisma } = Database;
 
-export default class Pricing {
+export class Pricing {
   /** 가격 정책 목록 조회 */
   public static async getPricings(props: {
     take?: number;

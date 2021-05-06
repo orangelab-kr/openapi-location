@@ -4,17 +4,13 @@ import {
   ProfileModel,
   RegionModel,
 } from '@prisma/client';
+import { InternalError, Joi, OPCODE, PATTERN, Region } from '..';
 
-import Database from '../tools/database';
-import InternalError from '../tools/error';
-import Joi from '../tools/joi';
-import OPCODE from '../tools/opcode';
-import PATTERN from '../tools/pattern';
-import Region from './region';
+import { Database } from '../tools';
 
 const { prisma } = Database;
 
-export default class Geofence {
+export class Geofence {
   public static async getGeofenceByLocation(props: {
     lat?: number;
     lng?: number;

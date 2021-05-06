@@ -1,15 +1,15 @@
-import { Joi, OPCODE, logger } from '../../tools';
-import Wrapper, { Callback } from '../../tools/wrapper';
+import { Callback, InternalError, Joi, OPCODE, Wrapper, logger } from '../..';
 
-import InternalError from '../../tools/error';
+import dayjs from 'dayjs';
 import jwt from 'jsonwebtoken';
-import moment from 'moment';
 
-export { default as InternalGeofenceMiddleware } from './geofence';
-export { default as InternalPricingMiddleware } from './pricing';
-export { default as InternalRegionMiddleware } from './region';
+export * from './geofence';
+export * from './permissions';
+export * from './pricing';
+export * from './profile';
+export * from './region';
 
-export default function InternalMiddleware(): Callback {
+export function InternalMiddleware(): Callback {
   return Wrapper(async (req, res, next) => {
     const { headers, query } = req;
     const token = headers.authorization
@@ -43,8 +43,8 @@ export default function InternalMiddleware(): Callback {
       });
 
       const payload = await schema.validateAsync(data);
-      const iat = moment(payload.iat);
-      const exp = moment(payload.exp);
+      const iat = dayjs(payload.iat);
+      const exp = dayjs(payload.exp);
       const prs = parseInt(payload.prs, 36)
         .toString(2)
         .padStart(128, '0')

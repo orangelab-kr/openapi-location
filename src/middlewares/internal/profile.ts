@@ -1,9 +1,6 @@
-import { InternalError, OPCODE } from '../../tools';
-import Wrapper, { Callback } from '../../tools/wrapper';
+import { Callback, InternalError, OPCODE, Profile, Wrapper } from '../..';
 
-import Profile from '../../controllers/profile';
-
-export default function InternalProfileMiddleware(): Callback {
+export function InternalProfileMiddleware(): Callback {
   return Wrapper(async (req, res, next) => {
     const {
       params: { profileId },
