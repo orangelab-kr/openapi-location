@@ -7,16 +7,39 @@ const { prisma } = Database;
 
 export class Region {
   /** 지역에 따른 모든 Geofence 를 가져옵니다. */
-  public static async getRegionsForUser(
-    regionId?: string
-  ): Promise<RegionModel[]> {
+  public static async getRegionsForUser(): Promise<RegionModel[]> {
     const enabled = true;
     const regions = await prisma.regionModel.findMany({
+      include: { pricing: true, geofences: { include: { profile: true } } },
+      where: { enabled, geofences: { some: { enabled } } },
+    });
+
+    return regions;
+  }
+
+  /** 특정 지역을 가져옵니다. */
+  public static async getRegionForUser(
+    regionId: string
+  ): Promise<RegionModel | null> {
+    const enabled = true;
+    const region = await prisma.regionModel.findFirst({
       include: { pricing: true, geofences: { include: { profile: true } } },
       where: { enabled, regionId, geofences: { some: { enabled } } },
     });
 
-    return regions;
+    return region;
+  }
+
+  /** 특정 지역을 가져옵니다. 또는 오류를 발생합니다. */
+  public static async getRegionForUserOrThrow(
+    regionId: string
+  ): Promise<RegionModel> {
+    const region = await Region.getRegionForUser(regionId);
+    if (!region) {
+      throw new InternalError('지역을 찾을 수 없습니다.', OPCODE.NOT_FOUND);
+    }
+
+    return region;
   }
 
   /** 지역 이름과 지역 ID를 가져옵니다. */
@@ -50,13 +73,8 @@ export class Region {
       orderBySort: PATTERN.PAGINATION.ORDER_BY.SORT.valid('asc', 'desc'),
     });
 
-    const {
-      take,
-      skip,
-      search,
-      orderByField,
-      orderBySort,
-    } = await schema.validateAsync(props);
+    const { take, skip, search, orderByField, orderBySort } =
+      await schema.validateAsync(props);
     const where: Prisma.RegionModelWhereInput = {};
     const orderBy = { [orderByField]: orderBySort };
     if (search) where.name = { contains: search };

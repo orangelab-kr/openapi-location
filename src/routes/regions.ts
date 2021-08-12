@@ -25,8 +25,8 @@ export function getRegionRouter(): Router {
     '/:regionId',
     Wrapper(async (req, res) => {
       const { regionId } = req.params;
-      const regions = await Region.getRegionsForUser(regionId);
-      res.json({ opcode: OPCODE.SUCCESS, regions });
+      const region = await Region.getRegionForUserOrThrow(regionId);
+      res.json({ opcode: OPCODE.SUCCESS, region });
     })
   );
 
