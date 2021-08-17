@@ -75,7 +75,7 @@ export class Pricing {
     standardPrice: number;
     nightlyPrice: number;
     standardTime: number;
-    maxPrice: number;
+    maxPrice?: number;
     perMinuteStandardPrice: number;
     perMinuteNightlyPrice: number;
     surchargePrice: number;
@@ -133,7 +133,7 @@ export class Pricing {
       standardPrice: number;
       nightlyPrice: number;
       standardTime: number;
-      maxPrice: number;
+      maxPrice?: number;
       perMinuteStandardPrice: number;
       perMinuteNightlyPrice: number;
       surchargePrice: number;

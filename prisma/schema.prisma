@@ -51,7 +51,7 @@ model PricingModel {
   standardPrice Int // 기본 이용 요금 
   nightlyPrice  Int // 기본 야간 요금
   standardTime  Int // 기본 이용 제공(분)
-  maxPrice      Int @default(50000) // 최대 금액(추가 요금 제외)
+  maxPrice      Int? // 최대 금액(추가 요금 제외)
 
   perMinuteStandardPrice Int // 기본 분당 요금
   perMinuteNightlyPrice  Int // 야간 분당 요금

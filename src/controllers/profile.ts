@@ -26,13 +26,8 @@ export class Profile {
       orderBySort: PATTERN.PAGINATION.ORDER_BY.SORT.valid('asc', 'desc'),
     });
 
-    const {
-      take,
-      skip,
-      search,
-      orderByField,
-      orderBySort,
-    } = await schema.validateAsync(props);
+    const { take, skip, search, orderByField, orderBySort } =
+      await schema.validateAsync(props);
     const where: Prisma.ProfileModelWhereInput = {};
     const orderBy = { [orderByField]: orderBySort };
     if (search) where.name = { contains: search };
@@ -93,14 +88,8 @@ export class Profile {
       hasSurcharge: PATTERN.PROFILE.HAS_SURCHARGE,
     });
 
-    const {
-      name,
-      priority,
-      speed,
-      color,
-      canReturn,
-      hasSurcharge,
-    } = await schema.validateAsync(props);
+    const { name, priority, speed, color, canReturn, hasSurcharge } =
+      await schema.validateAsync(props);
     const exists = await Profile.getProfileByName(name);
     if (exists) {
       throw new InternalError(
@@ -131,7 +120,7 @@ export class Profile {
       standardPrice: number;
       nightlyPrice: number;
       standardTime: number;
-      maxPrice: number;
+      maxPrice?: number;
       perMinuteStandardPrice: number;
       perMinuteNightlyPrice: number;
       surchargePrice: number;
@@ -146,14 +135,8 @@ export class Profile {
       hasSurcharge: PATTERN.PROFILE.HAS_SURCHARGE.optional(),
     });
 
-    const {
-      name,
-      priority,
-      speed,
-      color,
-      canReturn,
-      hasSurcharge,
-    } = await schema.validateAsync(props);
+    const { name, priority, speed, color, canReturn, hasSurcharge } =
+      await schema.validateAsync(props);
     if (name && profile.name !== name) {
       const exists = await Profile.getProfileByName(name);
       if (exists) {
