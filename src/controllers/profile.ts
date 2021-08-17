@@ -131,6 +131,7 @@ export class Profile {
       standardPrice: number;
       nightlyPrice: number;
       standardTime: number;
+      maxPrice: number;
       perMinuteStandardPrice: number;
       perMinuteNightlyPrice: number;
       surchargePrice: number;

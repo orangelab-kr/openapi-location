@@ -26,7 +26,7 @@ export class Region {
       include: { pricing: true, geofences: { include: { profile: true } } },
       where: { enabled, regionId, geofences: { some: { enabled } } },
     });
-
+ 
     return region;
   }
 

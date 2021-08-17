@@ -52,6 +52,7 @@ async function getPricing() {
         standardPrice: 1200,
         nightlyPrice: 1200,
         standardTime: 5,
+        maxPrice: 50000,
         perMinuteStandardPrice: 120,
         perMinuteNightlyPrice: 120,
         surchargePrice: 10000,

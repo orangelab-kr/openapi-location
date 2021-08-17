@@ -16,6 +16,7 @@ export const PATTERN = {
     STANDARD_PRICE: Joi.number().required(),
     NIGHTLY_PRICE: Joi.number().required(),
     STANDARD_TIME: Joi.number().required(),
+    MAX_PRICE: Joi.number().default(50000).optional(),
     PER_MINUTE_STANDARD_PRICE: Joi.number().required(),
     PER_MINUTE_NIGHTLY_PRICE: Joi.number().required(),
     SURCHARGE_PRICE: Joi.number().required(),

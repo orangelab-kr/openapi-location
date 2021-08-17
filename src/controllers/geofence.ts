@@ -57,6 +57,7 @@ SELECT JSON_OBJECT(
         'standardPrice', pc.standardPrice,
         'nightlyPrice', pc.nightlyPrice,
         'standardTime', pc.standardTime,
+        'maxPrice', pc.maxPrice,
         'perMinuteStandardPrice', pc.perMinuteStandardPrice,
         'perMinuteNightlyPrice', pc.perMinuteNightlyPrice,
         'surchargePrice', pc.surchargePrice,
@@ -109,13 +110,8 @@ ORDER BY p.priority DESC LIMIT 1;
       orderBySort: PATTERN.PAGINATION.ORDER_BY.SORT.valid('asc', 'desc'),
     });
 
-    const {
-      take,
-      skip,
-      search,
-      orderByField,
-      orderBySort,
-    } = await schema.validateAsync(props);
+    const { take, skip, search, orderByField, orderBySort } =
+      await schema.validateAsync(props);
     const { regionId } = region;
     const where = { regionId, name: { contains: search } };
     const orderBy = { [orderByField]: orderBySort };
@@ -230,13 +226,8 @@ ORDER BY p.priority DESC LIMIT 1;
       geojson: PATTERN.GEOFENCE.GEOJSON.optional(),
     });
 
-    const {
-      name,
-      enabled,
-      profileId,
-      regionId,
-      geojson,
-    } = await schema.validateAsync(props);
+    const { name, enabled, profileId, regionId, geojson } =
+      await schema.validateAsync(props);
     if (name && name !== geofence.name) {
       const exists = await Geofence.getGeofenceByName(region, name);
       if (exists) {

@@ -25,13 +25,8 @@ export class Pricing {
       orderBySort: PATTERN.PAGINATION.ORDER_BY.SORT.valid('asc', 'desc'),
     });
 
-    const {
-      take,
-      skip,
-      search,
-      orderByField,
-      orderBySort,
-    } = await schema.validateAsync(props);
+    const { take, skip, search, orderByField, orderBySort } =
+      await schema.validateAsync(props);
     const where: Prisma.PricingModelWhereInput = {};
     const orderBy = { [orderByField]: orderBySort };
     if (search) where.name = { contains: search };
@@ -80,6 +75,7 @@ export class Pricing {
     standardPrice: number;
     nightlyPrice: number;
     standardTime: number;
+    maxPrice: number;
     perMinuteStandardPrice: number;
     perMinuteNightlyPrice: number;
     surchargePrice: number;
@@ -89,6 +85,7 @@ export class Pricing {
       standardPrice: PATTERN.PRICING.STANDARD_PRICE,
       nightlyPrice: PATTERN.PRICING.NIGHTLY_PRICE,
       standardTime: PATTERN.PRICING.STANDARD_TIME,
+      maxPrice: PATTERN.PRICING.MAX_PRICE,
       perMinuteStandardPrice: PATTERN.PRICING.PER_MINUTE_STANDARD_PRICE,
       perMinuteNightlyPrice: PATTERN.PRICING.PER_MINUTE_NIGHTLY_PRICE,
       surchargePrice: PATTERN.PRICING.SURCHARGE_PRICE,
@@ -99,6 +96,7 @@ export class Pricing {
       standardPrice,
       nightlyPrice,
       standardTime,
+      maxPrice,
       perMinuteStandardPrice,
       perMinuteNightlyPrice,
       surchargePrice,
@@ -117,6 +115,7 @@ export class Pricing {
         standardPrice,
         nightlyPrice,
         standardTime,
+        maxPrice,
         perMinuteStandardPrice,
         perMinuteNightlyPrice,
         surchargePrice,
@@ -134,6 +133,7 @@ export class Pricing {
       standardPrice: number;
       nightlyPrice: number;
       standardTime: number;
+      maxPrice: number;
       perMinuteStandardPrice: number;
       perMinuteNightlyPrice: number;
       surchargePrice: number;
@@ -144,8 +144,11 @@ export class Pricing {
       standardPrice: PATTERN.PRICING.STANDARD_PRICE.optional(),
       nightlyPrice: PATTERN.PRICING.NIGHTLY_PRICE.optional(),
       standardTime: PATTERN.PRICING.STANDARD_TIME.optional(),
-      perMinuteStandardPrice: PATTERN.PRICING.PER_MINUTE_STANDARD_PRICE.optional(),
-      perMinuteNightlyPrice: PATTERN.PRICING.PER_MINUTE_NIGHTLY_PRICE.optional(),
+      maxPrice: PATTERN.PRICING.MAX_PRICE.optional(),
+      perMinuteStandardPrice:
+        PATTERN.PRICING.PER_MINUTE_STANDARD_PRICE.optional(),
+      perMinuteNightlyPrice:
+        PATTERN.PRICING.PER_MINUTE_NIGHTLY_PRICE.optional(),
       surchargePrice: PATTERN.PRICING.SURCHARGE_PRICE.optional(),
     });
 
@@ -154,6 +157,7 @@ export class Pricing {
       standardPrice,
       nightlyPrice,
       standardTime,
+      maxPrice,
       perMinuteStandardPrice,
       perMinuteNightlyPrice,
       surchargePrice,
@@ -176,6 +180,7 @@ export class Pricing {
         standardPrice,
         nightlyPrice,
         standardTime,
+        maxPrice,
         perMinuteStandardPrice,
         perMinuteNightlyPrice,
         surchargePrice,
