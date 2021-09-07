@@ -21,7 +21,10 @@ export function getRouter(): Router {
 
   router.get(
     '/geofences',
-    PlatformMiddleware(),
+    PlatformMiddleware({
+      permissionIds: ['regions.geofencebyLocation'],
+      final: true,
+    }),
     Wrapper(async (req, res) => {
       const geofence = await Geofence.getGeofenceByLocation(req.query);
       res.json({ opcode: OPCODE.SUCCESS, geofence });
