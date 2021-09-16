@@ -22,7 +22,7 @@ export function getRouter(): Router {
   router.get(
     '/geofences',
     PlatformMiddleware({
-      permissionIds: ['regions.geofencebyLocation'],
+      permissionIds: ['regions.geofenceByLocation'],
       final: true,
     }),
     Wrapper(async (req, res) => {

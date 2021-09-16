@@ -45,6 +45,7 @@ export const PATTERN = {
     ID: Joi.string().uuid().required(),
     ENABLED: Joi.boolean().required(),
     NAME: Joi.string().min(2).max(16).required(),
+    WEBLINK: Joi.string().uri().allow(null).optional(),
     GEOJSON: Joi.object({
       type: Joi.string().valid('Polygon').required(),
       coordinates: Joi.array()

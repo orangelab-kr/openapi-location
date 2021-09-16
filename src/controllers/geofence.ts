@@ -30,6 +30,7 @@ SELECT JSON_OBJECT(
   'geojson', JSON_UNQUOTE(g.geojson),
   'regionId', g.regionId,
   'profileId', g.profileId,
+  'weblink', g.weblink,
   'createdAt', g.createdAt,
   'updatedAt', g.updatedAt,
   'deletedAt', g.deletedAt,
@@ -170,6 +171,7 @@ ORDER BY p.priority DESC LIMIT 1;
       name: string;
       enabled: boolean;
       profileId: string;
+      weblink?: string;
       geojson: { type: 'Polygon'; coordinates: [[number, number]][][] };
     }
   ): Promise<GeofenceModel> {
@@ -177,12 +179,12 @@ ORDER BY p.priority DESC LIMIT 1;
       name: PATTERN.GEOFENCE.NAME,
       enabled: PATTERN.GEOFENCE.ENABLED,
       profileId: PATTERN.PROFILE.ID,
+      weblink: PATTERN.GEOFENCE.WEBLINK,
       geojson: PATTERN.GEOFENCE.GEOJSON,
     });
 
-    const { name, enabled, profileId, geojson } = await schema.validateAsync(
-      props
-    );
+    const { name, enabled, profileId, geojson, weblink } =
+      await schema.validateAsync(props);
 
     const exists = await Geofence.getGeofenceByName(region, name);
     if (exists) {
@@ -198,6 +200,7 @@ ORDER BY p.priority DESC LIMIT 1;
         name,
         enabled,
         geojson,
+        weblink,
         profile: { connect: { profileId } },
         region: { connect: { regionId } },
       },
@@ -215,6 +218,7 @@ ORDER BY p.priority DESC LIMIT 1;
       enabled?: boolean;
       profileId?: string;
       regionId?: string;
+      weblink?: string;
       geojson?: { type: 'Polygon'; coordinates: [[number, number]][][] };
     }
   ): Promise<void> {
@@ -223,11 +227,13 @@ ORDER BY p.priority DESC LIMIT 1;
       enabled: PATTERN.GEOFENCE.ENABLED.optional(),
       profileId: PATTERN.PROFILE.ID.optional(),
       regionId: PATTERN.REGION.ID.optional(),
+      weblink: PATTERN.GEOFENCE.WEBLINK.optional(),
       geojson: PATTERN.GEOFENCE.GEOJSON.optional(),
     });
 
-    const { name, enabled, profileId, regionId, geojson } =
+    const { name, enabled, profileId, regionId, geojson, weblink } =
       await schema.validateAsync(props);
+
     if (name && name !== geofence.name) {
       const exists = await Geofence.getGeofenceByName(region, name);
       if (exists) {
@@ -245,7 +251,7 @@ ORDER BY p.priority DESC LIMIT 1;
     const { geofenceId } = geofence;
     await prisma.geofenceModel.updateMany({
       where: { geofenceId },
-      data: { name, profileId, enabled, regionId, geojson },
+      data: { name, profileId, enabled, regionId, geojson, weblink },
     });
   }
 
