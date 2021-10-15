@@ -1,14 +1,13 @@
+import { Router } from 'express';
 import {
+  getInternalRegionsGeofencesRouter,
   InternalPermissionMiddleware,
   InternalRegionMiddleware,
-  OPCODE,
   PERMISSION,
   Region,
+  RESULT,
   Wrapper,
-  getInternalRegionsGeofencesRouter,
 } from '../../..';
-
-import { Router } from 'express';
 
 export * from './geofences';
 
@@ -26,7 +25,7 @@ export function getInternalRegionsRouter(): Router {
     InternalPermissionMiddleware(PERMISSION.REGIONS_LIST),
     Wrapper(async (req, res) => {
       const { regions, total } = await Region.getRegions(req.query);
-      res.json({ opcode: OPCODE.SUCCESS, regions, total });
+      throw RESULT.SUCCESS({ details: { regions, total } });
     })
   );
 
@@ -36,7 +35,7 @@ export function getInternalRegionsRouter(): Router {
     InternalRegionMiddleware(),
     Wrapper(async (req, res) => {
       const { region } = req.internal;
-      res.json({ opcode: OPCODE.SUCCESS, region });
+      throw RESULT.SUCCESS({ details: { region } });
     })
   );
 
@@ -45,7 +44,7 @@ export function getInternalRegionsRouter(): Router {
     InternalPermissionMiddleware(PERMISSION.REGIONS_CREATE),
     Wrapper(async (req, res) => {
       const { regionId } = await Region.createRegion(req.body);
-      res.json({ opcode: OPCODE.SUCCESS, regionId });
+      throw RESULT.SUCCESS({ details: { regionId } });
     })
   );
 
@@ -56,7 +55,7 @@ export function getInternalRegionsRouter(): Router {
     Wrapper(async (req, res) => {
       const { body, internal } = req;
       await Region.modifyRegion(internal.region, body);
-      res.json({ opcode: OPCODE.SUCCESS });
+      throw RESULT.SUCCESS();
     })
   );
 
@@ -66,7 +65,7 @@ export function getInternalRegionsRouter(): Router {
     InternalRegionMiddleware(),
     Wrapper(async (req, res) => {
       await Region.deleteRegion(req.internal.region);
-      res.json({ opcode: OPCODE.SUCCESS });
+      throw RESULT.SUCCESS();
     })
   );
 

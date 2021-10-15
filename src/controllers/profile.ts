@@ -1,6 +1,5 @@
-import { InternalError, Joi, OPCODE, PATTERN } from '..';
 import { Prisma, ProfileModel } from '@prisma/client';
-
+import { Joi, PATTERN, RESULT } from '..';
 import { Database } from '../tools';
 
 const { prisma } = Database;
@@ -49,13 +48,7 @@ export class Profile {
     profileId: string
   ): Promise<ProfileModel> {
     const profile = await Profile.getProfile(profileId);
-    if (!profile) {
-      throw new InternalError(
-        '해당 프로파일을 찾을 수 없습니다.',
-        OPCODE.NOT_FOUND
-      );
-    }
-
+    if (!profile) throw RESULT.CANNOT_FIND_PROFILE();
     return profile;
   }
 
@@ -91,13 +84,7 @@ export class Profile {
     const { name, priority, speed, color, canReturn, hasSurcharge } =
       await schema.validateAsync(props);
     const exists = await Profile.getProfileByName(name);
-    if (exists) {
-      throw new InternalError(
-        '이미 동일한 이름의 프로파일이 있습니다.',
-        OPCODE.ALREADY_EXISTS
-      );
-    }
-
+    if (exists) throw RESULT.ALREADY_EXISTS_PROFILE_NAME();
     const profile = await prisma.profileModel.create({
       data: {
         name,
@@ -139,12 +126,7 @@ export class Profile {
       await schema.validateAsync(props);
     if (name && profile.name !== name) {
       const exists = await Profile.getProfileByName(name);
-      if (exists) {
-        throw new InternalError(
-          '이미 동일한 이름의 프로파일이 있습니다.',
-          OPCODE.ALREADY_EXISTS
-        );
-      }
+      if (exists) throw RESULT;
     }
 
     const { profileId } = profile;
@@ -166,11 +148,8 @@ export class Profile {
     try {
       const { profileId } = profile;
       await prisma.profileModel.deleteMany({ where: { profileId } });
-    } catch (err) {
-      throw new InternalError(
-        '해당 프로파일을 사용하는 구역이 있습니다.',
-        OPCODE.ERROR
-      );
+    } catch (err: any) {
+      throw RESULT.PROFILE_IS_USING();
     }
   }
 

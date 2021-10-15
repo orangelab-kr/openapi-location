@@ -1,18 +1,12 @@
-import { Callback, InternalError, OPCODE, Region, Wrapper } from '../..';
+import { Region, RESULT, Wrapper, WrapperCallback } from '../..';
 
-export function InternalRegionMiddleware(): Callback {
+export function InternalRegionMiddleware(): WrapperCallback {
   return Wrapper(async (req, res, next) => {
     const {
       params: { regionId },
     } = req;
 
-    if (!regionId) {
-      throw new InternalError(
-        '해당 지역을 찾을 수 없습니다.',
-        OPCODE.NOT_FOUND
-      );
-    }
-
+    if (!regionId) throw RESULT.CANNOT_FIND_REGION();
     req.internal.region = await Region.getRegionOrThrow(regionId);
     next();
   });

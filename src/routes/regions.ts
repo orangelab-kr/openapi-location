@@ -1,6 +1,5 @@
-import { OPCODE, PlatformMiddleware, Region, Wrapper } from '..';
-
 import { Router } from 'express';
+import { PlatformMiddleware, Region, RESULT, Wrapper } from '..';
 
 export function getRegionRouter(): Router {
   const router = Router();
@@ -13,7 +12,7 @@ export function getRegionRouter(): Router {
     }),
     Wrapper(async (req, res) => {
       const regions = await Region.getShortRegionsForUser();
-      res.json({ opcode: OPCODE.SUCCESS, regions });
+      throw RESULT.SUCCESS({ details: { regions } });
     })
   );
 
@@ -25,7 +24,7 @@ export function getRegionRouter(): Router {
     }),
     Wrapper(async (req, res) => {
       const regions = await Region.getRegionsForUser();
-      res.json({ opcode: OPCODE.SUCCESS, regions });
+      throw RESULT.SUCCESS({ details: { regions } });
     })
   );
 
@@ -38,7 +37,7 @@ export function getRegionRouter(): Router {
     Wrapper(async (req, res) => {
       const { regionId } = req.params;
       const region = await Region.getRegionForUserOrThrow(regionId);
-      res.json({ opcode: OPCODE.SUCCESS, region });
+      throw RESULT.SUCCESS({ details: { region } });
     })
   );
 

@@ -1,19 +1,13 @@
-import { Callback, Geofence, InternalError, OPCODE, Wrapper } from '../..';
+import { Geofence, RESULT, Wrapper, WrapperCallback } from '../..';
 
-export function InternalGeofenceMiddleware(): Callback {
+export function InternalGeofenceMiddleware(): WrapperCallback {
   return Wrapper(async (req, res, next) => {
     const {
       internal: { region },
       params: { geofenceId },
     } = req;
 
-    if (!geofenceId) {
-      throw new InternalError(
-        '해당 구역을 찾을 수 없습니다.',
-        OPCODE.NOT_FOUND
-      );
-    }
-
+    if (!geofenceId) throw RESULT.CANNOT_FIND_GEOFENCE();
     req.internal.geofence = await Geofence.getGeofenceOrThrow(
       region,
       geofenceId

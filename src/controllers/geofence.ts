@@ -4,9 +4,8 @@ import {
   ProfileModel,
   RegionModel,
 } from '@prisma/client';
-import { InternalError, Joi, OPCODE, PATTERN, Region } from '..';
-
-import { Database } from '../tools';
+import { Region } from '.';
+import { Database, Joi, PATTERN, RESULT } from '../tools';
 
 const { prisma } = Database;
 
@@ -22,7 +21,7 @@ export class Geofence {
   > {
     const { lat, lng } = await PATTERN.GEOFENCE.POINT.validateAsync(props);
 
-    const res = await prisma.$queryRaw(`\
+    const res: any = await prisma.$queryRawUnsafe(`\
 SELECT JSON_OBJECT(
   'geofenceId', g.geofenceId,
   'enabled', IF(g.enabled = '1', TRUE, FALSE),
@@ -77,10 +76,7 @@ MBRContains(ST_GeomFromGeoJSON(geojson), GeomFromText("Point(${lng} ${lat})"))
 ORDER BY p.priority DESC LIMIT 1;
 `);
 
-    if (res.length <= 0) {
-      throw new InternalError('오류가 발생하였습니다.', OPCODE.ERROR);
-    }
-
+    if (res.length <= 0) throw RESULT.INVALID_ERROR();
     const geofence: GeofenceModel & {
       profile: ProfileModel;
       region: RegionModel & { pricing: PricingModel };
@@ -137,13 +133,7 @@ ORDER BY p.priority DESC LIMIT 1;
     geofenceId: string
   ): Promise<GeofenceModel> {
     const geofence = await Geofence.getGeofence(region, geofenceId);
-    if (!geofence) {
-      throw new InternalError(
-        '해당 구역을 찾을 수 없습니다.',
-        OPCODE.NOT_FOUND
-      );
-    }
-
+    if (!geofence) throw RESULT.CANNOT_FIND_GEOFENCE();
     return geofence;
   }
 
@@ -187,12 +177,7 @@ ORDER BY p.priority DESC LIMIT 1;
       await schema.validateAsync(props);
 
     const exists = await Geofence.getGeofenceByName(region, name);
-    if (exists) {
-      throw new InternalError(
-        '이미 동일한 이름의 구역이 존재합니다.',
-        OPCODE.ALREADY_EXISTS
-      );
-    }
+    if (exists) throw RESULT.ALREADY_EXISTS_GEOFENCE_NAME();
 
     const { regionId } = region;
     const geofence = await prisma.geofenceModel.create({
@@ -236,12 +221,7 @@ ORDER BY p.priority DESC LIMIT 1;
 
     if (name && name !== geofence.name) {
       const exists = await Geofence.getGeofenceByName(region, name);
-      if (exists) {
-        throw new InternalError(
-          '이미 동일한 이름의 구역이 존재합니다.',
-          OPCODE.ALREADY_EXISTS
-        );
-      }
+      if (exists) throw RESULT.ALREADY_EXISTS_GEOFENCE_NAME();
     }
 
     if (regionId && regionId !== geofence.regionId) {

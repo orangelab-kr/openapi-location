@@ -1,13 +1,12 @@
+import { Router } from 'express';
 import {
   InternalPermissionMiddleware,
   InternalProfileMiddleware,
-  OPCODE,
   PERMISSION,
   Profile,
+  RESULT,
   Wrapper,
 } from '../..';
-
-import { Router } from 'express';
 
 export function getInternalProfilesRouter(): Router {
   const router = Router();
@@ -17,7 +16,7 @@ export function getInternalProfilesRouter(): Router {
     InternalPermissionMiddleware(PERMISSION.PROFILES_LIST),
     Wrapper(async (req, res) => {
       const { profiles, total } = await Profile.getProfiles(req.query);
-      res.json({ opcode: OPCODE.SUCCESS, profiles, total });
+      throw RESULT.SUCCESS({ details: { profiles, total } });
     })
   );
 
@@ -27,7 +26,7 @@ export function getInternalProfilesRouter(): Router {
     InternalProfileMiddleware(),
     Wrapper(async (req, res) => {
       const { profile } = req.internal;
-      res.json({ opcode: OPCODE.SUCCESS, profile });
+      throw RESULT.SUCCESS({ details: { profile } });
     })
   );
 
@@ -36,7 +35,7 @@ export function getInternalProfilesRouter(): Router {
     InternalPermissionMiddleware(PERMISSION.PROFILES_CREATE),
     Wrapper(async (req, res) => {
       const { profileId } = await Profile.createProfile(req.body);
-      res.json({ opcode: OPCODE.SUCCESS, profileId });
+      throw RESULT.SUCCESS({ details: { profileId } });
     })
   );
 
@@ -47,7 +46,7 @@ export function getInternalProfilesRouter(): Router {
     Wrapper(async (req, res) => {
       const { body, internal } = req;
       await Profile.modifyProfile(internal.profile, body);
-      res.json({ opcode: OPCODE.SUCCESS });
+      throw RESULT.SUCCESS();
     })
   );
 
@@ -57,7 +56,7 @@ export function getInternalProfilesRouter(): Router {
     InternalProfileMiddleware(),
     Wrapper(async (req, res) => {
       await Profile.deleteProfile(req.internal.profile);
-      res.json({ opcode: OPCODE.SUCCESS });
+      throw RESULT.SUCCESS();
     })
   );
 

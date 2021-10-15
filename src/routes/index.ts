@@ -5,8 +5,8 @@ import {
   getInternalRouter,
   getRegionRouter,
   InternalMiddleware,
-  OPCODE,
   PlatformMiddleware,
+  RESULT,
   Wrapper,
 } from '..';
 
@@ -27,17 +27,14 @@ export function getRouter(): Router {
     }),
     Wrapper(async (req, res) => {
       const geofence = await Geofence.getGeofenceByLocation(req.query);
-      res.json({ opcode: OPCODE.SUCCESS, geofence });
+      throw RESULT.SUCCESS({ details: { geofence } });
     })
   );
 
   router.get(
     '/',
-    Wrapper(async (_req, res) => {
-      res.json({
-        opcode: OPCODE.SUCCESS,
-        ...clusterInfo,
-      });
+    Wrapper(async () => {
+      throw RESULT.SUCCESS({ details: clusterInfo });
     })
   );
 

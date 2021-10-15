@@ -1,13 +1,12 @@
+import { Router } from 'express';
 import {
   Geofence,
   InternalGeofenceMiddleware,
   InternalPermissionMiddleware,
-  OPCODE,
   PERMISSION,
+  RESULT,
   Wrapper,
 } from '../../..';
-
-import { Router } from 'express';
 
 export function getInternalRegionsGeofencesRouter(): Router {
   const router = Router();
@@ -22,7 +21,7 @@ export function getInternalRegionsGeofencesRouter(): Router {
       } = req;
 
       const { geofences, total } = await Geofence.getGeofences(region, query);
-      res.json({ opcode: OPCODE.SUCCESS, geofences, total });
+      throw RESULT.SUCCESS({ details: { geofences, total } });
     })
   );
 
@@ -32,7 +31,7 @@ export function getInternalRegionsGeofencesRouter(): Router {
     InternalGeofenceMiddleware(),
     Wrapper(async (req, res) => {
       const { geofence } = req.internal;
-      res.json({ opcode: OPCODE.SUCCESS, geofence });
+      throw RESULT.SUCCESS({ details: { geofence } });
     })
   );
 
@@ -46,7 +45,7 @@ export function getInternalRegionsGeofencesRouter(): Router {
       } = req;
 
       const { geofenceId } = await Geofence.createGeofence(region, body);
-      res.json({ opcode: OPCODE.SUCCESS, geofenceId });
+      throw RESULT.SUCCESS({ details: { geofenceId } });
     })
   );
 
@@ -61,7 +60,7 @@ export function getInternalRegionsGeofencesRouter(): Router {
       } = req;
 
       await Geofence.modifyGeofence(region, geofence, body);
-      res.json({ opcode: OPCODE.SUCCESS });
+      throw RESULT.SUCCESS();
     })
   );
 
@@ -72,7 +71,7 @@ export function getInternalRegionsGeofencesRouter(): Router {
     Wrapper(async (req, res) => {
       const { region, geofence } = req.internal;
       await Geofence.deleteGeofence(region, geofence);
-      res.json({ opcode: OPCODE.SUCCESS });
+      throw RESULT.SUCCESS();
     })
   );
 

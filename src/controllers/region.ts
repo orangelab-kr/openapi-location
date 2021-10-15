@@ -1,7 +1,6 @@
-import { InternalError, Joi, OPCODE, PATTERN, Pricing } from '..';
 import { Prisma, RegionModel } from '@prisma/client';
-
-import { Database } from '../tools';
+import { Joi, PATTERN, Pricing } from '..';
+import { Database, RESULT } from '../tools';
 
 const { prisma } = Database;
 
@@ -26,7 +25,7 @@ export class Region {
       include: { pricing: true, geofences: { include: { profile: true } } },
       where: { enabled, regionId, geofences: { some: { enabled } } },
     });
- 
+
     return region;
   }
 
@@ -35,10 +34,7 @@ export class Region {
     regionId: string
   ): Promise<RegionModel> {
     const region = await Region.getRegionForUser(regionId);
-    if (!region) {
-      throw new InternalError('지역을 찾을 수 없습니다.', OPCODE.NOT_FOUND);
-    }
-
+    if (!region) throw RESULT.CANNOT_FIND_PROFILE();
     return region;
   }
 
@@ -96,13 +92,7 @@ export class Region {
   /** 지역을 가져옵니다. 없을 경우 오류를 발생시킵니다. */
   public static async getRegionOrThrow(regionId: string): Promise<RegionModel> {
     const region = await Region.getRegion(regionId);
-    if (!region) {
-      throw new InternalError(
-        '해당 지역을 찾을 수 없습니다.',
-        OPCODE.NOT_FOUND
-      );
-    }
-
+    if (!region) throw RESULT.CANNOT_FIND_REGION();
     return region;
   }
 
@@ -130,13 +120,7 @@ export class Region {
 
     const { name, enabled, pricingId } = await schema.validateAsync(props);
     const exists = await Region.getRegionByName(name);
-    if (exists) {
-      throw new InternalError(
-        '이미 동일한 이름의 지역이 있습니다.',
-        OPCODE.ALREADY_EXISTS
-      );
-    }
-
+    if (exists) throw RESULT.ALREADY_EXISTS_REGION_NAME();
     await Pricing.getPricingOrThrow(pricingId);
     const region = await prisma.regionModel.create({
       data: { name, enabled, pricing: { connect: { pricingId } } },
@@ -166,12 +150,7 @@ export class Region {
     const where: Prisma.RegionModelWhereUniqueInput = { regionId };
     if (name && region.name !== name) {
       const exists = await Region.getRegionByName(name);
-      if (exists) {
-        throw new InternalError(
-          '이미 동일한 이름의 가격 정책이 있습니다.',
-          OPCODE.ALREADY_EXISTS
-        );
-      }
+      if (exists) throw RESULT.ALREADY_EXISTS_REGION_NAME();
     }
 
     if (pricingId && region.pricingId !== pricingId) {

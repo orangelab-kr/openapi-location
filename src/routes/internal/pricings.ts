@@ -1,13 +1,12 @@
+import { Router } from 'express';
 import {
   InternalPermissionMiddleware,
   InternalPricingMiddleware,
-  OPCODE,
   PERMISSION,
   Pricing,
+  RESULT,
   Wrapper,
 } from '../..';
-
-import { Router } from 'express';
 
 export function getInternalPricingsRouter(): Router {
   const router = Router();
@@ -17,7 +16,7 @@ export function getInternalPricingsRouter(): Router {
     InternalPermissionMiddleware(PERMISSION.PRICINGS_LIST),
     Wrapper(async (req, res) => {
       const { pricings, total } = await Pricing.getPricings(req.query);
-      res.json({ opcode: OPCODE.SUCCESS, pricings, total });
+      throw RESULT.SUCCESS({ details: { pricings, total } });
     })
   );
 
@@ -27,7 +26,7 @@ export function getInternalPricingsRouter(): Router {
     InternalPricingMiddleware(),
     Wrapper(async (req, res) => {
       const { pricing } = req.internal;
-      res.json({ opcode: OPCODE.SUCCESS, pricing });
+      throw RESULT.SUCCESS({ details: { pricing } });
     })
   );
 
@@ -36,7 +35,7 @@ export function getInternalPricingsRouter(): Router {
     InternalPermissionMiddleware(PERMISSION.PRICINGS_CREATE),
     Wrapper(async (req, res) => {
       const { pricingId } = await Pricing.createPricing(req.body);
-      res.json({ opcode: OPCODE.SUCCESS, pricingId });
+      throw RESULT.SUCCESS({ details: { pricingId } });
     })
   );
 
@@ -47,7 +46,7 @@ export function getInternalPricingsRouter(): Router {
     Wrapper(async (req, res) => {
       const { body, internal } = req;
       await Pricing.modifyPricing(internal.pricing, body);
-      res.json({ opcode: OPCODE.SUCCESS });
+      throw RESULT.SUCCESS();
     })
   );
 
@@ -57,7 +56,7 @@ export function getInternalPricingsRouter(): Router {
     InternalPricingMiddleware(),
     Wrapper(async (req, res) => {
       await Pricing.deletePricing(req.internal.pricing);
-      res.json({ opcode: OPCODE.SUCCESS });
+      throw RESULT.SUCCESS();
     })
   );
 

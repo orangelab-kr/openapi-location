@@ -1,18 +1,12 @@
-import { Callback, InternalError, OPCODE, Profile, Wrapper } from '../..';
+import { Profile, RESULT, Wrapper, WrapperCallback } from '../..';
 
-export function InternalProfileMiddleware(): Callback {
+export function InternalProfileMiddleware(): WrapperCallback {
   return Wrapper(async (req, res, next) => {
     const {
       params: { profileId },
     } = req;
 
-    if (!profileId) {
-      throw new InternalError(
-        '해당 가격 정책을 찾을 수 없습니다.',
-        OPCODE.NOT_FOUND
-      );
-    }
-
+    if (!profileId) throw RESULT.CANNOT_FIND_PRICING();
     req.internal.profile = await Profile.getProfileOrThrow(profileId);
     next();
   });

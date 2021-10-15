@@ -1,0 +1,19 @@
+{
+  "REQUIRED_ACCESS_KEY": "This service requires authentication.",
+  "EXPIRED_ACCESS_KEY": "Your access token has expired.",
+  "PERMISSION_DENIED": "You do not have permission. (%s)",
+  "REQUIRED_LOGIN": "This service requires a login.",
+  "INVALID_ERROR": "An unknown error has occurred.",
+  "FAILED_VALIDATE": "Please enter the correct information.",
+  "INVALID_API": "Invalid API address.",
+  "CANNOT_FIND_GEOFENCE": "Geofence does not exist.",
+  "ALREADY_EXISTS_GEOFENCE_NAME": "A geofence with the same name already exists.",
+  "CANNOT_FIND_PRICING": "There is no pricing.",
+  "ALREADY_EXISTS_PRICING_NAME": "There is already a pricing with the same name.",
+  "PRICING_IS_USING": "There are regions that use pricing.",
+  "CANNOT_FIND_PROFILE": "Profile does not exist.",
+  "ALREADY_EXISTS_PROFILE_NAME": "A profile with the same name already exists.",
+  "PROFILE_IS_USING": "There are geofence that use profiles.",
+  "CANNOT_FIND_REGION": "The region does not exist.",
+  "ALREADY_EXISTS_REGION_NAME": "A region with the same name already exists."
+}

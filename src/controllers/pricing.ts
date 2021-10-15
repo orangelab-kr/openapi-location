@@ -1,6 +1,5 @@
-import { InternalError, Joi, OPCODE, PATTERN } from '..';
 import { PricingModel, Prisma } from '@prisma/client';
-
+import { Joi, PATTERN, RESULT } from '..';
 import { Database } from '../tools';
 
 const { prisma } = Database;
@@ -48,13 +47,7 @@ export class Pricing {
     pricingId: string
   ): Promise<PricingModel> {
     const pricing = await Pricing.getPricing(pricingId);
-    if (!pricing) {
-      throw new InternalError(
-        '해당 가격 정책을 찾을 수 없습니다.',
-        OPCODE.NOT_FOUND
-      );
-    }
-
+    if (!pricing) throw RESULT.CANNOT_FIND_PRICING();
     return pricing;
   }
 
@@ -102,13 +95,7 @@ export class Pricing {
       surchargePrice,
     } = await schema.validateAsync(props);
     const exists = await Pricing.getPricingByName(name);
-    if (exists) {
-      throw new InternalError(
-        '이미 동일한 이름의 가격 정책이 있습니다.',
-        OPCODE.ALREADY_EXISTS
-      );
-    }
-
+    if (exists) throw RESULT.ALREADY_EXISTS_PRICING_NAME();
     const pricing = await prisma.pricingModel.create({
       data: {
         name,
@@ -164,12 +151,7 @@ export class Pricing {
     } = await schema.validateAsync(props);
     if (name && pricing.name !== name) {
       const exists = await Pricing.getPricingByName(name);
-      if (exists) {
-        throw new InternalError(
-          '이미 동일한 이름의 가격 정책이 있습니다.',
-          OPCODE.ALREADY_EXISTS
-        );
-      }
+      if (exists) throw RESULT.ALREADY_EXISTS_PRICING_NAME();
     }
 
     const { pricingId } = pricing;
@@ -193,11 +175,8 @@ export class Pricing {
     try {
       const { pricingId } = pricing;
       await prisma.pricingModel.deleteMany({ where: { pricingId } });
-    } catch (err) {
-      throw new InternalError(
-        '해당 가격 정책을 사용하는 지역이 존재합니다.',
-        OPCODE.ERROR
-      );
+    } catch (err: any) {
+      throw RESULT.PRICING_IS_USING();
     }
   }
 

@@ -1,15 +1,14 @@
+import { Router } from 'express';
 import {
   Geofence,
-  InternalPermissionMiddleware,
-  OPCODE,
-  PERMISSION,
-  Wrapper,
   getInternalPricingsRouter,
   getInternalProfilesRouter,
   getInternalRegionsRouter,
+  InternalPermissionMiddleware,
+  PERMISSION,
+  RESULT,
+  Wrapper,
 } from '../..';
-
-import { Router } from 'express';
 
 export * from './pricings';
 export * from './profiles';
@@ -26,7 +25,7 @@ export function getInternalRouter(): Router {
     InternalPermissionMiddleware(PERMISSION.GEOFENCES_LOCATION),
     Wrapper(async (req, res) => {
       const geofence = await Geofence.getGeofenceByLocation(req.query);
-      res.json({ opcode: OPCODE.SUCCESS, geofence });
+      throw RESULT.SUCCESS({ details: { geofence } });
     })
   );
 
