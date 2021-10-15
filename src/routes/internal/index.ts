@@ -23,7 +23,7 @@ export function getInternalRouter(): Router {
   router.get(
     '/geofences',
     InternalPermissionMiddleware(PERMISSION.GEOFENCES_LOCATION),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const geofence = await Geofence.getGeofenceByLocation(req.query);
       throw RESULT.SUCCESS({ details: { geofence } });
     })

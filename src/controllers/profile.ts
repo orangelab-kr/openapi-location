@@ -1,8 +1,5 @@
 import { Prisma, ProfileModel } from '@prisma/client';
-import { Joi, PATTERN, RESULT } from '..';
-import { Database } from '../tools';
-
-const { prisma } = Database;
+import { Joi, PATTERN, prisma, RESULT } from '..';
 
 export class Profile {
   /** 프로파일 목록 조회 */

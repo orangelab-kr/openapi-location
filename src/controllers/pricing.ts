@@ -1,8 +1,5 @@
 import { PricingModel, Prisma } from '@prisma/client';
-import { Joi, PATTERN, RESULT } from '..';
-import { Database } from '../tools';
-
-const { prisma } = Database;
+import { Joi, PATTERN, prisma, RESULT } from '..';
 
 export class Pricing {
   /** 가격 정책 목록 조회 */

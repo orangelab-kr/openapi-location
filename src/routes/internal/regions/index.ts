@@ -23,7 +23,7 @@ export function getInternalRegionsRouter(): Router {
   router.get(
     '/',
     InternalPermissionMiddleware(PERMISSION.REGIONS_LIST),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { regions, total } = await Region.getRegions(req.query);
       throw RESULT.SUCCESS({ details: { regions, total } });
     })
@@ -33,7 +33,7 @@ export function getInternalRegionsRouter(): Router {
     '/:regionId',
     InternalPermissionMiddleware(PERMISSION.REGIONS_VIEW),
     InternalRegionMiddleware(),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { region } = req.internal;
       throw RESULT.SUCCESS({ details: { region } });
     })
@@ -42,7 +42,7 @@ export function getInternalRegionsRouter(): Router {
   router.post(
     '/',
     InternalPermissionMiddleware(PERMISSION.REGIONS_CREATE),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { regionId } = await Region.createRegion(req.body);
       throw RESULT.SUCCESS({ details: { regionId } });
     })
@@ -52,7 +52,7 @@ export function getInternalRegionsRouter(): Router {
     '/:regionId',
     InternalPermissionMiddleware(PERMISSION.REGIONS_MODIFY),
     InternalRegionMiddleware(),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { body, internal } = req;
       await Region.modifyRegion(internal.region, body);
       throw RESULT.SUCCESS();
@@ -63,7 +63,7 @@ export function getInternalRegionsRouter(): Router {
     '/:regionId',
     InternalPermissionMiddleware(PERMISSION.REGIONS_DELETE),
     InternalRegionMiddleware(),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       await Region.deleteRegion(req.internal.region);
       throw RESULT.SUCCESS();
     })

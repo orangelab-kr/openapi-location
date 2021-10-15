@@ -10,7 +10,7 @@ export function getRegionRouter(): Router {
       permissionIds: ['regions.list'],
       final: true,
     }),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const regions = await Region.getShortRegionsForUser();
       throw RESULT.SUCCESS({ details: { regions } });
     })
@@ -22,7 +22,7 @@ export function getRegionRouter(): Router {
       permissionIds: ['regions.all'],
       final: true,
     }),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const regions = await Region.getRegionsForUser();
       throw RESULT.SUCCESS({ details: { regions } });
     })
@@ -34,7 +34,7 @@ export function getRegionRouter(): Router {
       permissionIds: ['regions.view'],
       final: true,
     }),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { regionId } = req.params;
       const region = await Region.getRegionForUserOrThrow(regionId);
       throw RESULT.SUCCESS({ details: { region } });

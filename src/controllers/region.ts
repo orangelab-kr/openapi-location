@@ -1,8 +1,5 @@
 import { Prisma, RegionModel } from '@prisma/client';
-import { Joi, PATTERN, Pricing } from '..';
-import { Database, RESULT } from '../tools';
-
-const { prisma } = Database;
+import { Joi, PATTERN, Pricing, prisma, RESULT } from '..';
 
 export class Region {
   /** 지역에 따른 모든 Geofence 를 가져옵니다. */

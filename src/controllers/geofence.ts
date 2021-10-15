@@ -4,10 +4,7 @@ import {
   ProfileModel,
   RegionModel,
 } from '@prisma/client';
-import { Region } from '.';
-import { Database, Joi, PATTERN, RESULT } from '../tools';
-
-const { prisma } = Database;
+import { Joi, PATTERN, prisma, Region, RESULT } from '..';
 
 export class Geofence {
   public static async getGeofenceByLocation(props: {

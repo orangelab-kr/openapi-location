@@ -25,7 +25,7 @@ export function getRouter(): Router {
       permissionIds: ['regions.geofenceByLocation'],
       final: true,
     }),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const geofence = await Geofence.getGeofenceByLocation(req.query);
       throw RESULT.SUCCESS({ details: { geofence } });
     })

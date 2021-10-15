@@ -14,7 +14,7 @@ export function getInternalRegionsGeofencesRouter(): Router {
   router.get(
     '/',
     InternalPermissionMiddleware(PERMISSION.GEOFENCES_LIST),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const {
         query,
         internal: { region },
@@ -29,7 +29,7 @@ export function getInternalRegionsGeofencesRouter(): Router {
     '/:geofenceId',
     InternalPermissionMiddleware(PERMISSION.GEOFENCES_VIEW),
     InternalGeofenceMiddleware(),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { geofence } = req.internal;
       throw RESULT.SUCCESS({ details: { geofence } });
     })
@@ -38,7 +38,7 @@ export function getInternalRegionsGeofencesRouter(): Router {
   router.post(
     '/',
     InternalPermissionMiddleware(PERMISSION.GEOFENCES_CREATE),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const {
         body,
         internal: { region },
@@ -53,7 +53,7 @@ export function getInternalRegionsGeofencesRouter(): Router {
     '/:geofenceId',
     InternalPermissionMiddleware(PERMISSION.GEOFENCES_MODIFY),
     InternalGeofenceMiddleware(),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const {
         body,
         internal: { region, geofence },
@@ -68,7 +68,7 @@ export function getInternalRegionsGeofencesRouter(): Router {
     '/:geofenceId',
     InternalPermissionMiddleware(PERMISSION.GEOFENCES_DELETE),
     InternalGeofenceMiddleware(),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { region, geofence } = req.internal;
       await Geofence.deleteGeofence(region, geofence);
       throw RESULT.SUCCESS();

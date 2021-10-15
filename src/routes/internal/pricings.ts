@@ -14,7 +14,7 @@ export function getInternalPricingsRouter(): Router {
   router.get(
     '/',
     InternalPermissionMiddleware(PERMISSION.PRICINGS_LIST),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { pricings, total } = await Pricing.getPricings(req.query);
       throw RESULT.SUCCESS({ details: { pricings, total } });
     })
@@ -24,7 +24,7 @@ export function getInternalPricingsRouter(): Router {
     '/:pricingId',
     InternalPermissionMiddleware(PERMISSION.PRICINGS_VIEW),
     InternalPricingMiddleware(),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { pricing } = req.internal;
       throw RESULT.SUCCESS({ details: { pricing } });
     })
@@ -33,7 +33,7 @@ export function getInternalPricingsRouter(): Router {
   router.post(
     '/',
     InternalPermissionMiddleware(PERMISSION.PRICINGS_CREATE),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { pricingId } = await Pricing.createPricing(req.body);
       throw RESULT.SUCCESS({ details: { pricingId } });
     })
@@ -43,7 +43,7 @@ export function getInternalPricingsRouter(): Router {
     '/:pricingId',
     InternalPermissionMiddleware(PERMISSION.PRICINGS_MODIFY),
     InternalPricingMiddleware(),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { body, internal } = req;
       await Pricing.modifyPricing(internal.pricing, body);
       throw RESULT.SUCCESS();
@@ -54,7 +54,7 @@ export function getInternalPricingsRouter(): Router {
     '/:pricingId',
     InternalPermissionMiddleware(PERMISSION.PRICINGS_DELETE),
     InternalPricingMiddleware(),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       await Pricing.deletePricing(req.internal.pricing);
       throw RESULT.SUCCESS();
     })
