@@ -6,11 +6,8 @@ export function getRegionRouter(): Router {
 
   router.get(
     '/',
-    PlatformMiddleware({
-      permissionIds: ['regions.list'],
-      final: true,
-    }),
-    Wrapper(async (req) => {
+    PlatformMiddleware({ permissionIds: ['regions.list'], final: true }),
+    Wrapper(async () => {
       const regions = await Region.getShortRegionsForUser();
       throw RESULT.SUCCESS({ details: { regions } });
     })
@@ -18,11 +15,8 @@ export function getRegionRouter(): Router {
 
   router.get(
     '/all',
-    PlatformMiddleware({
-      permissionIds: ['regions.all'],
-      final: true,
-    }),
-    Wrapper(async (req) => {
+    PlatformMiddleware({ permissionIds: ['regions.all'], final: true }),
+    Wrapper(async () => {
       const regions = await Region.getRegionsForUser();
       throw RESULT.SUCCESS({ details: { regions } });
     })
@@ -30,10 +24,7 @@ export function getRegionRouter(): Router {
 
   router.get(
     '/:regionId',
-    PlatformMiddleware({
-      permissionIds: ['regions.view'],
-      final: true,
-    }),
+    PlatformMiddleware({ permissionIds: ['regions.view'], final: true }),
     Wrapper(async (req) => {
       const { regionId } = req.params;
       const region = await Region.getRegionForUserOrThrow(regionId);

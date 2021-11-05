@@ -23,7 +23,7 @@ module.exports = {
   },
   plugins: [
     new CopyWebpackPlugin({
-      patterns: ['./locales/**', './prisma/**'],
+      patterns: ['./locales/**'],
     }),
   ],
   output: {
