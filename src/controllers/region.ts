@@ -2,28 +2,41 @@ import { Prisma, RegionModel } from '@prisma/client';
 import { Joi, PATTERN, Pricing, prisma, RESULT } from '..';
 
 export class Region {
-  /** 지역에 따른 모든 Geofence 를 가져옵니다. */
-  public static async getRegionsForUser(): Promise<RegionModel[]> {
-    const enabled = true;
-    const regions = await prisma.regionModel.findMany({
-      include: { pricing: true, geofences: { include: { profile: true } } },
-      where: { enabled, geofences: { some: { enabled } } },
-    });
+  public static defaultInclude: Prisma.RegionModelInclude = {
+    pricing: true,
+    geofences: { include: { profile: true }, where: { enabled: true } },
+  };
 
-    return regions;
+  /** 지역에 따른 모든 Geofence 를 가져옵니다. */
+  public static async getRegionsForUser(props: {
+    priority?: number[];
+  }): Promise<RegionModel[]> {
+    const { priority } = await Joi.object({
+      priority: Joi.array().items(Joi.number()).single().optional(),
+    }).validateAsync(props);
+
+    const include = Region.defaultInclude;
+    const where: Prisma.RegionModelWhereInput = { enabled: true };
+
+    if (priority !== undefined) {
+      if (!include.geofences || typeof include.geofences === 'boolean') {
+        include.geofences = {};
+      }
+
+      if (!include.geofences.where) include.geofences.where = {};
+      include.geofences.where.profile = { priority: { in: priority } };
+    }
+
+    return prisma.regionModel.findMany({ include, where });
   }
 
   /** 특정 지역을 가져옵니다. */
   public static async getRegionForUser(
     regionId: string
   ): Promise<RegionModel | null> {
-    const enabled = true;
-    const region = await prisma.regionModel.findFirst({
-      include: { pricing: true, geofences: { include: { profile: true } } },
-      where: { enabled, regionId, geofences: { some: { enabled } } },
-    });
-
-    return region;
+    const include = Region.defaultInclude;
+    const where: Prisma.RegionModelWhereInput = { regionId, enabled: true };
+    return prisma.regionModel.findFirst({ include, where });
   }
 
   /** 특정 지역을 가져옵니다. 또는 오류를 발생합니다. */

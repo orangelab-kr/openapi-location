@@ -16,8 +16,8 @@ export function getRegionRouter(): Router {
   router.get(
     '/all',
     PlatformMiddleware({ permissionIds: ['regions.all'], final: true }),
-    Wrapper(async () => {
-      const regions = await Region.getRegionsForUser();
+    Wrapper(async (req) => {
+      const regions = await Region.getRegionsForUser(req.query);
       throw RESULT.SUCCESS({ details: { regions } });
     })
   );
