@@ -30,6 +30,15 @@ export function getInternalRegionsRouter(): Router {
   );
 
   router.get(
+    '/all',
+    InternalPermissionMiddleware(PERMISSION.REGIONS_LIST),
+    Wrapper(async (req) => {
+      const regions = await Region.getRegionsForUser(req.query);
+      throw RESULT.SUCCESS({ details: { regions } });
+    })
+  );
+
+  router.get(
     '/:regionId',
     InternalPermissionMiddleware(PERMISSION.REGIONS_VIEW),
     InternalRegionMiddleware(),
