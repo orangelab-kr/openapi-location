@@ -32,7 +32,7 @@ export const PATTERN = {
     PRIORITY: Joi.number().required(),
     SPEED: Joi.number().min(5).max(50).allow(null).optional(),
     COLOR: Joi.string()
-      .regex(/^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/)
+      .regex(/^#([a-fA-F0-9]{3}|[a-fA-F0-9]{6}|[a-fA-F0-9]{8})$/)
       .required(),
     CAN_RETURN: Joi.boolean().required(),
     HAS_SURCHARGE: Joi.boolean().required(),
