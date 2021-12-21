@@ -122,7 +122,7 @@ export class Pricing {
       perMinuteNightlyPrice: number;
       surchargePrice: number;
     }
-  ): Promise<void> {
+  ): Promise<PricingModel> {
     const schema = Joi.object({
       name: PATTERN.PRICING.NAME.optional(),
       standardPrice: PATTERN.PRICING.STANDARD_PRICE.optional(),
@@ -152,7 +152,7 @@ export class Pricing {
     }
 
     const { pricingId } = pricing;
-    await prisma.pricingModel.update({
+    return prisma.pricingModel.update({
       where: { pricingId },
       data: {
         name,

@@ -52,8 +52,8 @@ export function getInternalRegionsRouter(): Router {
     '/',
     InternalPermissionMiddleware(PERMISSION.REGIONS_CREATE),
     Wrapper(async (req) => {
-      const { regionId } = await Region.createRegion(req.body);
-      throw RESULT.SUCCESS({ details: { regionId } });
+      const region = await Region.createRegion(req.body);
+      throw RESULT.SUCCESS({ details: { region } });
     })
   );
 
@@ -63,8 +63,8 @@ export function getInternalRegionsRouter(): Router {
     InternalRegionMiddleware(),
     Wrapper(async (req) => {
       const { body, internal } = req;
-      await Region.modifyRegion(internal.region, body);
-      throw RESULT.SUCCESS();
+      const region = await Region.modifyRegion(internal.region, body);
+      throw RESULT.SUCCESS({ details: { region } });
     })
   );
 

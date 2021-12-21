@@ -34,8 +34,8 @@ export function getInternalPricingsRouter(): Router {
     '/',
     InternalPermissionMiddleware(PERMISSION.PRICINGS_CREATE),
     Wrapper(async (req) => {
-      const { pricingId } = await Pricing.createPricing(req.body);
-      throw RESULT.SUCCESS({ details: { pricingId } });
+      const pricing = await Pricing.createPricing(req.body);
+      throw RESULT.SUCCESS({ details: { pricing } });
     })
   );
 
@@ -45,8 +45,8 @@ export function getInternalPricingsRouter(): Router {
     InternalPricingMiddleware(),
     Wrapper(async (req) => {
       const { body, internal } = req;
-      await Pricing.modifyPricing(internal.pricing, body);
-      throw RESULT.SUCCESS();
+      const pricing = await Pricing.modifyPricing(internal.pricing, body);
+      throw RESULT.SUCCESS({ details: { pricing } });
     })
   );
 

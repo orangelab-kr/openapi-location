@@ -44,8 +44,8 @@ export function getInternalRegionsGeofencesRouter(): Router {
         internal: { region },
       } = req;
 
-      const { geofenceId } = await Geofence.createGeofence(region, body);
-      throw RESULT.SUCCESS({ details: { geofenceId } });
+      const geofence = await Geofence.createGeofence(region, body);
+      throw RESULT.SUCCESS({ details: { geofence } });
     })
   );
 
@@ -54,13 +54,13 @@ export function getInternalRegionsGeofencesRouter(): Router {
     InternalPermissionMiddleware(PERMISSION.GEOFENCES_MODIFY),
     InternalGeofenceMiddleware(),
     Wrapper(async (req) => {
-      const {
-        body,
-        internal: { region, geofence },
-      } = req;
+      const geofence = await Geofence.modifyGeofence(
+        req.internal.region,
+        req.internal.geofence,
+        req.body
+      );
 
-      await Geofence.modifyGeofence(region, geofence, body);
-      throw RESULT.SUCCESS();
+      throw RESULT.SUCCESS({ details: { geofence } });
     })
   );
 

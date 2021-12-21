@@ -203,7 +203,7 @@ ORDER BY p.priority DESC LIMIT 1;
       weblink?: string;
       geojson?: { type: 'Polygon'; coordinates: [[number, number]][][] };
     }
-  ): Promise<void> {
+  ): Promise<GeofenceModel> {
     const schema = Joi.object({
       name: PATTERN.GEOFENCE.NAME.optional(),
       enabled: PATTERN.GEOFENCE.ENABLED.optional(),
@@ -226,7 +226,7 @@ ORDER BY p.priority DESC LIMIT 1;
     }
 
     const { geofenceId } = geofence;
-    await prisma.geofenceModel.updateMany({
+    return prisma.geofenceModel.update({
       where: { geofenceId },
       data: { name, profileId, enabled, regionId, geojson, weblink },
     });

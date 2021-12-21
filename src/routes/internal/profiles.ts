@@ -34,8 +34,8 @@ export function getInternalProfilesRouter(): Router {
     '/',
     InternalPermissionMiddleware(PERMISSION.PROFILES_CREATE),
     Wrapper(async (req) => {
-      const { profileId } = await Profile.createProfile(req.body);
-      throw RESULT.SUCCESS({ details: { profileId } });
+      const profile = await Profile.createProfile(req.body);
+      throw RESULT.SUCCESS({ details: { profile } });
     })
   );
 
@@ -45,8 +45,8 @@ export function getInternalProfilesRouter(): Router {
     InternalProfileMiddleware(),
     Wrapper(async (req) => {
       const { body, internal } = req;
-      await Profile.modifyProfile(internal.profile, body);
-      throw RESULT.SUCCESS();
+      const profile = await Profile.modifyProfile(internal.profile, body);
+      throw RESULT.SUCCESS({ details: { profile } });
     })
   );
 

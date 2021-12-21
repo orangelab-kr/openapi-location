@@ -109,7 +109,7 @@ export class Profile {
       perMinuteNightlyPrice: number;
       surchargePrice: number;
     }
-  ): Promise<void> {
+  ): Promise<ProfileModel> {
     const schema = Joi.object({
       name: PATTERN.PROFILE.NAME.optional(),
       priority: PATTERN.PROFILE.PRIORITY.optional(),
@@ -127,7 +127,7 @@ export class Profile {
     }
 
     const { profileId } = profile;
-    await prisma.profileModel.update({
+    return prisma.profileModel.update({
       where: { profileId },
       data: {
         name,

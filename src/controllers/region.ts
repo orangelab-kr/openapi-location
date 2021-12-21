@@ -147,7 +147,7 @@ export class Region {
       enabled: boolean;
       pricingId: string;
     }
-  ): Promise<void> {
+  ): Promise<RegionModel> {
     const schema = Joi.object({
       name: PATTERN.REGION.NAME.optional(),
       enabled: PATTERN.REGION.ENABLED.optional(),
@@ -168,7 +168,7 @@ export class Region {
       data.pricing = { connect: { pricingId } };
     }
 
-    await prisma.regionModel.update({ where, data });
+    return prisma.regionModel.update({ where, data });
   }
 
   /** 지역을 삭제합니다. */
