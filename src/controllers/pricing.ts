@@ -25,7 +25,13 @@ export class Pricing {
       await schema.validateAsync(props);
     const where: Prisma.PricingModelWhereInput = {};
     const orderBy = { [orderByField]: orderBySort };
-    if (search) where.name = { contains: search };
+    if (search) {
+      where.OR = [
+        { pricingId: { contains: search } },
+        { name: { contains: search } },
+      ];
+    }
+
     const [total, pricings] = await prisma.$transaction([
       prisma.pricingModel.count({ where }),
       prisma.pricingModel.findMany({
@@ -69,6 +75,7 @@ export class Pricing {
     perMinuteStandardPrice: number;
     perMinuteNightlyPrice: number;
     surchargePrice: number;
+    helmetLostPrice: number;
   }): Promise<PricingModel> {
     const schema = Joi.object({
       name: PATTERN.PRICING.NAME,
@@ -79,6 +86,7 @@ export class Pricing {
       perMinuteStandardPrice: PATTERN.PRICING.PER_MINUTE_STANDARD_PRICE,
       perMinuteNightlyPrice: PATTERN.PRICING.PER_MINUTE_NIGHTLY_PRICE,
       surchargePrice: PATTERN.PRICING.SURCHARGE_PRICE,
+      helmetLostPrice: PATTERN.PRICING.HELMET_LOST_PRICE,
     });
 
     const {
@@ -90,6 +98,7 @@ export class Pricing {
       perMinuteStandardPrice,
       perMinuteNightlyPrice,
       surchargePrice,
+      helmetLostPrice,
     } = await schema.validateAsync(props);
     const exists = await Pricing.getPricingByName(name);
     if (exists) throw RESULT.ALREADY_EXISTS_PRICING_NAME();
@@ -103,6 +112,7 @@ export class Pricing {
         perMinuteStandardPrice,
         perMinuteNightlyPrice,
         surchargePrice,
+        helmetLostPrice,
       },
     });
 
@@ -121,6 +131,7 @@ export class Pricing {
       perMinuteStandardPrice: number;
       perMinuteNightlyPrice: number;
       surchargePrice: number;
+      helmetLostPrice: number;
     }
   ): Promise<PricingModel> {
     const schema = Joi.object({
@@ -134,6 +145,7 @@ export class Pricing {
       perMinuteNightlyPrice:
         PATTERN.PRICING.PER_MINUTE_NIGHTLY_PRICE.optional(),
       surchargePrice: PATTERN.PRICING.SURCHARGE_PRICE.optional(),
+      helmetLostPrice: PATTERN.PRICING.HELMET_LOST_PRICE.optional(),
     });
 
     const {
@@ -145,6 +157,7 @@ export class Pricing {
       perMinuteStandardPrice,
       perMinuteNightlyPrice,
       surchargePrice,
+      helmetLostPrice,
     } = await schema.validateAsync(props);
     if (name && pricing.name !== name) {
       const exists = await Pricing.getPricingByName(name);
@@ -163,6 +176,7 @@ export class Pricing {
         perMinuteStandardPrice,
         perMinuteNightlyPrice,
         surchargePrice,
+        helmetLostPrice,
       },
     });
   }

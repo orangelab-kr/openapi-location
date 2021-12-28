@@ -58,6 +58,7 @@ SELECT JSON_OBJECT(
         'perMinuteStandardPrice', pc.perMinuteStandardPrice,
         'perMinuteNightlyPrice', pc.perMinuteNightlyPrice,
         'surchargePrice', pc.surchargePrice,
+        'helmetLostPrice', pc.helmetLostPrice,
         'createdAt', pc.createdAt,
         'updatedAt', pc.updatedAt,
         'deletedAt', pc.deletedAt

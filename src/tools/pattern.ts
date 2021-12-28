@@ -20,6 +20,7 @@ export const PATTERN = {
     PER_MINUTE_STANDARD_PRICE: Joi.number().required(),
     PER_MINUTE_NIGHTLY_PRICE: Joi.number().required(),
     SURCHARGE_PRICE: Joi.number().required(),
+    HELMET_LOST_PRICE: Joi.number().required(),
   },
   REGION: {
     ID: Joi.string().uuid().required(),

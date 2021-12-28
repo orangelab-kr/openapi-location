@@ -100,14 +100,12 @@ export class Profile {
   public static async modifyProfile(
     profile: ProfileModel,
     props: {
-      name: string;
-      standardPrice: number;
-      nightlyPrice: number;
-      standardTime: number;
-      maxPrice?: number;
-      perMinuteStandardPrice: number;
-      perMinuteNightlyPrice: number;
-      surchargePrice: number;
+      name?: string;
+      priority?: number;
+      speed?: number;
+      color?: string;
+      canReturn?: boolean;
+      hasSurcharge?: boolean;
     }
   ): Promise<ProfileModel> {
     const schema = Joi.object({

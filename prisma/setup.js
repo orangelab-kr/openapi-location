@@ -56,6 +56,7 @@ async function getPricing() {
         perMinuteStandardPrice: 120,
         perMinuteNightlyPrice: 120,
         surchargePrice: 10000,
+        helmetLostPrice: 15000,
       },
     });
   }
