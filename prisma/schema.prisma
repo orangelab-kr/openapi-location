@@ -54,7 +54,7 @@ model PricingModel {
   perMinuteStandardPrice Int // 기본 분당 요금
   perMinuteNightlyPrice  Int // 야간 분당 요금
   surchargePrice         Int // 추가 금액
-  helmetLostPrice        Int @default(15500) // 헬멧 분실 금액
+  helmetLostPrice        Int // 헬멧 분실 금액
 
   regions RegionModel[]
 
