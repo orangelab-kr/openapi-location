@@ -3,7 +3,7 @@ import {
   InternalFranchiseClient,
   InternalPlatformClient,
   PlatformPermission,
-} from 'openapi-internal-sdk';
+} from '@hikick/openapi-internal-sdk';
 
 export class InternalClient {
   public static getFranchise(

@@ -1,4 +1,4 @@
-import { PlatformPermission } from 'openapi-internal-sdk';
+import { PlatformPermission } from '@hikick/openapi-internal-sdk';
 import { InternalClient, Wrapper, WrapperCallback } from '..';
 
 export function PlatformMiddleware(
@@ -42,7 +42,7 @@ export function PlatformMiddleware(
       const { platform } = accessKey;
       req.loggined = { platform, accessKey };
     } else {
-      const sessionId = `${authorization}`.substr(7);
+      const sessionId = `${authorization}`.substring(7);
       const user = await platformClient.getUserWithPermissions({
         sessionId,
         permissionIds,
