@@ -12,7 +12,7 @@ export const PATTERN = {
   },
   PRICING: {
     ID: Joi.string().uuid().required(),
-    NAME: Joi.string().min(2).max(16).required(),
+    NAME: Joi.string().min(2).max(32).required(),
     STANDARD_PRICE: Joi.number().required(),
     NIGHTLY_PRICE: Joi.number().required(),
     STANDARD_TIME: Joi.number().required(),
@@ -25,11 +25,11 @@ export const PATTERN = {
   REGION: {
     ID: Joi.string().uuid().required(),
     ENABLED: Joi.boolean().required(),
-    NAME: Joi.string().min(2).max(16).required(),
+    NAME: Joi.string().min(2).max(32).required(),
   },
   PROFILE: {
     ID: Joi.string().uuid().required(),
-    NAME: Joi.string().min(2).max(16).required(),
+    NAME: Joi.string().min(2).max(32).required(),
     PRIORITY: Joi.number().required(),
     SPEED: Joi.number().min(5).max(50).allow(null).optional(),
     COLOR: Joi.string()
@@ -45,7 +45,7 @@ export const PATTERN = {
     }).required(),
     ID: Joi.string().uuid().required(),
     ENABLED: Joi.boolean().required(),
-    NAME: Joi.string().min(2).max(16).required(),
+    NAME: Joi.string().min(2).max(32).required(),
     WEBLINK: Joi.string().uri().allow(null).optional(),
     GEOJSON: Joi.object({
       type: Joi.string().valid('Polygon').required(),
