@@ -4,11 +4,12 @@ import i18n from 'i18n';
 import serverless from 'serverless-http';
 import {
   getRouter,
-  RESULT,
   LoggerMiddleware,
   registerSentry,
+  RESULT,
   Wrapper,
 } from '.';
+import { Cache } from './controllers/cache';
 
 export * from './controllers';
 export * from './middlewares';

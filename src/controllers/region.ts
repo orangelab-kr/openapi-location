@@ -1,5 +1,6 @@
 import { Prisma, RegionModel } from '@prisma/client';
 import { Joi, PATTERN, Pricing, prisma, RESULT } from '..';
+import { Cache } from './cache';
 
 export class Region {
   public static defaultInclude: Prisma.RegionModelInclude = {
@@ -54,7 +55,7 @@ export class Region {
   > {
     const regions = await prisma.regionModel.findMany({
       where: { enabled: true },
-      select: { regionId: true, name: true },
+      select: { regionId: true, name: true, cacheUrl: true },
     });
 
     return regions;
@@ -99,6 +100,29 @@ export class Region {
     return { total, regions };
   }
 
+  public static async deployAllRegion(): Promise<Region[]> {
+    const regions = await prisma.regionModel.findMany({
+      where: { enabled: true },
+    });
+
+    return Promise.all(
+      regions.map(async (region) => Region.deployRegion(region))
+    );
+  }
+
+  public static async deployRegion(region: RegionModel): Promise<RegionModel> {
+    const { regionId } = region;
+    const geofences = await prisma.geofenceModel.findMany({
+      where: { enabled: true, regionId },
+    });
+
+    const cacheUrl = await Cache.uploadCache(geofences);
+    return prisma.regionModel.update({
+      where: { regionId },
+      data: { cacheUrl },
+    });
+  }
+
   /** 지역을 가져옵니다. 없을 경우 오류를 발생시킵니다. */
   public static async getRegionOrThrow(regionId: string): Promise<RegionModel> {
     const region = await Region.getRegion(regionId);
@@ -128,12 +152,13 @@ export class Region {
       pricingId: PATTERN.PRICING.ID,
     });
 
+    const cacheUrl = await Cache.uploadCache([]);
     const { name, enabled, pricingId } = await schema.validateAsync(props);
     const exists = await Region.getRegionByName(name);
     if (exists) throw RESULT.ALREADY_EXISTS_REGION_NAME();
     await Pricing.getPricingOrThrow(pricingId);
     const region = await prisma.regionModel.create({
-      data: { name, enabled, pricing: { connect: { pricingId } } },
+      data: { name, enabled, cacheUrl, pricing: { connect: { pricingId } } },
     });
 
     return region;

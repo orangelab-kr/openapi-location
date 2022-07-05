@@ -12,6 +12,7 @@ model RegionModel {
   regionId String  @id @default(uuid())
   enabled  Boolean @default(true)
   name     String
+  cacheUrl String
 
   pricingId String
   pricing   PricingModel @relation(fields: [pricingId], references: [pricingId])

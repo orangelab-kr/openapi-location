@@ -39,11 +39,30 @@ export function getInternalRegionsRouter(): Router {
   );
 
   router.get(
+    '/deploy',
+    InternalPermissionMiddleware(PERMISSION.GEOFENCES_MODIFY),
+    Wrapper(async () => {
+      const regions = await Region.deployAllRegion();
+      throw RESULT.SUCCESS({ details: { regions } });
+    })
+  );
+
+  router.get(
     '/:regionId',
     InternalPermissionMiddleware(PERMISSION.REGIONS_VIEW),
     InternalRegionMiddleware(),
     Wrapper(async (req) => {
       const { region } = req.internal;
+      throw RESULT.SUCCESS({ details: { region } });
+    })
+  );
+
+  router.get(
+    '/:regionId/deploy',
+    InternalPermissionMiddleware(PERMISSION.REGIONS_MODIFY),
+    InternalRegionMiddleware(),
+    Wrapper(async (req) => {
+      const region = await Region.deployRegion(req.internal.region);
       throw RESULT.SUCCESS({ details: { region } });
     })
   );
