@@ -114,6 +114,7 @@ export class Region {
     const { regionId } = region;
     const geofences = await prisma.geofenceModel.findMany({
       where: { enabled: true, regionId },
+      include: { profile: true },
     });
 
     const cacheUrl = await Cache.uploadCache(geofences);
