@@ -3,13 +3,7 @@ import crypto from 'crypto';
 import { Geofence } from './geofence';
 
 export class Cache {
-  public static s3 = new S3({
-    credentials: {
-      accessKeyId: String(process.env.AWS_ACCESS_KEY_ID),
-      secretAccessKey: String(process.env.AWS_SECRET_ACCESS_KEY),
-    },
-  });
-
+  public static s3 = new S3({});
   public static getCacheId(geofences: Geofence[]): string {
     return crypto
       .createHash('sha256')
