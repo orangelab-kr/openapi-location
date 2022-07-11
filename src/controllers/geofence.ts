@@ -40,31 +40,33 @@ SELECT JSON_OBJECT(
     'hasSurcharge', IF(p.hasSurcharge = '1', TRUE, FALSE),
     'createdAt', p.createdAt,
     'updatedAt', p.updatedAt,
-    'deletedAt', p.deletedAt),
-    'region', JSON_OBJECT(
-      'regionId', r.regionId,
-      'enabled', IF(r.enabled = '1', TRUE, FALSE),
-      'name', r.name,
-      'pricingId', r.pricingId,
-      'createdAt', r.createdAt,
-      'updatedAt', r.createdAt,
-      'pricing', JSON_OBJECT(
-        'pricingId', pc.pricingId,
-        'name', pc.name,
-        'standardPrice', pc.standardPrice,
-        'nightlyPrice', pc.nightlyPrice,
-        'standardTime', pc.standardTime,
-        'maxPrice', pc.maxPrice,
-        'perMinuteStandardPrice', pc.perMinuteStandardPrice,
-        'perMinuteNightlyPrice', pc.perMinuteNightlyPrice,
-        'surchargePrice', pc.surchargePrice,
-        'helmetLostPrice', pc.helmetLostPrice,
-        'createdAt', pc.createdAt,
-        'updatedAt', pc.updatedAt,
-        'deletedAt', pc.deletedAt
-      )
+    'deletedAt', p.deletedAt
+  ),
+  'region', JSON_OBJECT(
+    'regionId', r.regionId,
+    'enabled', IF(r.enabled = '1', TRUE, FALSE),
+    'name', r.name,
+    'cacheUrl', r.cacheUrl,
+    'pricingId', r.pricingId,
+    'createdAt', r.createdAt,
+    'updatedAt', r.createdAt,
+    'pricing', JSON_OBJECT(
+      'pricingId', pc.pricingId,
+      'name', pc.name,
+      'standardPrice', pc.standardPrice,
+      'nightlyPrice', pc.nightlyPrice,
+      'standardTime', pc.standardTime,
+      'maxPrice', pc.maxPrice,
+      'perMinuteStandardPrice', pc.perMinuteStandardPrice,
+      'perMinuteNightlyPrice', pc.perMinuteNightlyPrice,
+      'surchargePrice', pc.surchargePrice,
+      'helmetLostPrice', pc.helmetLostPrice,
+      'createdAt', pc.createdAt,
+      'updatedAt', pc.updatedAt,
+      'deletedAt', pc.deletedAt
     )
-  ) as geofence
+  )
+) as geofence
 FROM GeofenceModel AS g
 LEFT OUTER JOIN ProfileModel as p ON g.profileId = p.profileId
 LEFT OUTER JOIN RegionModel r on g.regionId = r.regionId
