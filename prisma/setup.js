@@ -97,6 +97,7 @@ async function getRegion(pricingId) {
       data: {
         name: regionName,
         pricing: { connect: { pricingId } },
+        main: true,
       },
     });
   }

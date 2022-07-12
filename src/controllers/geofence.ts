@@ -47,6 +47,7 @@ SELECT JSON_OBJECT(
     'enabled', IF(r.enabled = '1', TRUE, FALSE),
     'name', r.name,
     'cacheUrl', r.cacheUrl,
+    'main', r.main,
     'pricingId', r.pricingId,
     'createdAt', r.createdAt,
     'updatedAt', r.createdAt,

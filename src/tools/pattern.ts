@@ -26,6 +26,7 @@ export const PATTERN = {
     ID: Joi.string().uuid().required(),
     ENABLED: Joi.boolean().required(),
     NAME: Joi.string().min(2).max(32).required(),
+    MAIN: Joi.boolean().default(false).optional(),
   },
   PROFILE: {
     ID: Joi.string().uuid().required(),

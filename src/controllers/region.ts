@@ -55,7 +55,7 @@ export class Region {
   > {
     const regions = await prisma.regionModel.findMany({
       where: { enabled: true },
-      select: { regionId: true, name: true, cacheUrl: true },
+      select: { regionId: true, name: true, cacheUrl: true, main: true },
     });
 
     return regions;
@@ -150,16 +150,26 @@ export class Region {
     const schema = Joi.object({
       name: PATTERN.REGION.NAME,
       enabled: PATTERN.REGION.ENABLED,
+      main: PATTERN.REGION.MAIN,
       pricingId: PATTERN.PRICING.ID,
     });
 
     const cacheUrl = await Cache.uploadCache([]);
-    const { name, enabled, pricingId } = await schema.validateAsync(props);
+    const { name, enabled, pricingId, main } = await schema.validateAsync(
+      props
+    );
+
     const exists = await Region.getRegionByName(name);
     if (exists) throw RESULT.ALREADY_EXISTS_REGION_NAME();
     await Pricing.getPricingOrThrow(pricingId);
     const region = await prisma.regionModel.create({
-      data: { name, enabled, cacheUrl, pricing: { connect: { pricingId } } },
+      data: {
+        name,
+        enabled,
+        main,
+        cacheUrl,
+        pricing: { connect: { pricingId } },
+      },
     });
 
     return region;
@@ -172,17 +182,22 @@ export class Region {
       name: string;
       enabled: boolean;
       pricingId: string;
+      main: boolean;
     }
   ): Promise<RegionModel> {
     const schema = Joi.object({
       name: PATTERN.REGION.NAME.optional(),
       enabled: PATTERN.REGION.ENABLED.optional(),
       pricingId: PATTERN.PRICING.ID.optional(),
+      main: PATTERN.REGION.MAIN.optional(),
     });
 
     const { regionId } = region;
-    const { name, enabled, pricingId } = await schema.validateAsync(props);
-    const data: Prisma.RegionModelUpdateInput = { name, enabled };
+    const { name, enabled, pricingId, main } = await schema.validateAsync(
+      props
+    );
+
+    const data: Prisma.RegionModelUpdateInput = { name, enabled, main };
     const where: Prisma.RegionModelWhereUniqueInput = { regionId };
     if (name && region.name !== name) {
       const exists = await Region.getRegionByName(name);

@@ -11,6 +11,8 @@ generator client {
 model RegionModel {
   regionId String  @id @default(uuid())
   enabled  Boolean @default(true)
+  main     Boolean @default(false)
+
   name     String
   cacheUrl String
 
