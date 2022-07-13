@@ -31,6 +31,16 @@ export class Region {
     return prisma.regionModel.findMany({ include, where });
   }
 
+  public static async setMainRegion(region: RegionModel): Promise<RegionModel> {
+    const { regionId } = region;
+    await prisma.regionModel.updateMany({
+      where: { NOT: { regionId } },
+      data: { main: false },
+    });
+
+    return region;
+  }
+
   /** 특정 지역을 가져옵니다. */
   public static async getRegionForUser(
     regionId: string
@@ -172,6 +182,7 @@ export class Region {
       },
     });
 
+    if (main) await this.setMainRegion(region);
     return region;
   }
 
@@ -209,7 +220,9 @@ export class Region {
       data.pricing = { connect: { pricingId } };
     }
 
-    return prisma.regionModel.update({ where, data });
+    const updatedRegion = await prisma.regionModel.update({ where, data });
+    if (main) await this.setMainRegion(updatedRegion);
+    return updatedRegion;
   }
 
   /** 지역을 삭제합니다. */
