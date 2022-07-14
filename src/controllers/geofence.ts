@@ -6,6 +6,11 @@ import {
 } from '@prisma/client';
 import { Joi, PATTERN, prisma, Region, RESULT } from '..';
 
+export interface Geojson {
+  type: 'Polygon';
+  coordinates: [number, number][][];
+}
+
 export class Geofence {
   public static async getGeofenceByLocation(props: {
     lat?: number;
@@ -155,6 +160,15 @@ ORDER BY p.priority DESC LIMIT 1;
     return geofence;
   }
 
+  public static correctionGeojson(geojson: Geojson): Geojson {
+    const [coordinate] = geojson.coordinates;
+    if (coordinate[0] !== coordinate[coordinate.length - 1]) {
+      geojson.coordinates[0].push(coordinate[0]);
+    }
+
+    return geojson;
+  }
+
   /** 구역을 생성합니다. */
   public static async createGeofence(
     region: RegionModel,
@@ -164,7 +178,7 @@ ORDER BY p.priority DESC LIMIT 1;
       profileId: string;
       weblink?: string;
       main?: boolean;
-      geojson: { type: 'Polygon'; coordinates: [[number, number]][][] };
+      geojson: Geojson;
     }
   ): Promise<GeofenceModel> {
     const schema = Joi.object({
@@ -178,17 +192,15 @@ ORDER BY p.priority DESC LIMIT 1;
 
     const { name, enabled, profileId, geojson, weblink, main } =
       await schema.validateAsync(props);
-
     const exists = await Geofence.getGeofenceByName(region, name);
     if (exists) throw RESULT.ALREADY_EXISTS_GEOFENCE_NAME();
-
     const { regionId } = region;
     const geofence = await prisma.geofenceModel.create({
       data: {
         name,
         enabled,
-        geojson,
         weblink,
+        geojson: <any>this.correctionGeojson(geojson),
         profile: { connect: { profileId } },
         region: { connect: { regionId } },
       },
@@ -234,7 +246,7 @@ ORDER BY p.priority DESC LIMIT 1;
       main: PATTERN.GEOFENCE.MAIN.optional(),
     });
 
-    const { name, enabled, profileId, regionId, geojson, weblink, main } =
+    let { name, enabled, profileId, regionId, geojson, weblink, main } =
       await schema.validateAsync(props);
 
     if (name && name !== geofence.name) {
@@ -247,6 +259,7 @@ ORDER BY p.priority DESC LIMIT 1;
     }
 
     const { geofenceId } = geofence;
+    if (geojson) geojson = <any>this.correctionGeojson(geojson);
     const updatedGeofence = prisma.geofenceModel.update({
       where: { geofenceId },
       data: { name, profileId, enabled, regionId, geojson, weblink },
