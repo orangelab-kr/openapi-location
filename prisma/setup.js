@@ -118,6 +118,7 @@ async function getGeofence(regionId, profileId) {
         region: { connect: { regionId } },
         profile: { connect: { profileId } },
         geojson: geojson,
+        main: true,
       },
     });
   }

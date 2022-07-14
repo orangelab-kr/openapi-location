@@ -17,12 +17,12 @@ export class Geofence {
     }
   > {
     const { lat, lng } = await PATTERN.GEOFENCE.POINT.validateAsync(props);
-
     const res: any = await prisma.$queryRawUnsafe(`\
 SELECT JSON_OBJECT(
   'geofenceId', g.geofenceId,
   'enabled', IF(g.enabled = '1', TRUE, FALSE),
   'name', g.name,
+  'main', IF(g.main = '1', TRUE, FALSE),
   'geojson', JSON_UNQUOTE(g.geojson),
   'regionId', g.regionId,
   'profileId', g.profileId,
@@ -47,7 +47,7 @@ SELECT JSON_OBJECT(
     'enabled', IF(r.enabled = '1', TRUE, FALSE),
     'name', r.name,
     'cacheUrl', r.cacheUrl,
-    'main', r.main,
+    'main', IF(r.main = '1', TRUE, FALSE),
     'pricingId', r.pricingId,
     'createdAt', r.createdAt,
     'updatedAt', r.createdAt,
@@ -163,6 +163,7 @@ ORDER BY p.priority DESC LIMIT 1;
       enabled: boolean;
       profileId: string;
       weblink?: string;
+      main?: boolean;
       geojson: { type: 'Polygon'; coordinates: [[number, number]][][] };
     }
   ): Promise<GeofenceModel> {
@@ -172,9 +173,10 @@ ORDER BY p.priority DESC LIMIT 1;
       profileId: PATTERN.PROFILE.ID,
       weblink: PATTERN.GEOFENCE.WEBLINK,
       geojson: PATTERN.GEOFENCE.GEOJSON,
+      main: PATTERN.GEOFENCE.MAIN,
     });
 
-    const { name, enabled, profileId, geojson, weblink } =
+    const { name, enabled, profileId, geojson, weblink, main } =
       await schema.validateAsync(props);
 
     const exists = await Geofence.getGeofenceByName(region, name);
@@ -192,6 +194,19 @@ ORDER BY p.priority DESC LIMIT 1;
       },
     });
 
+    if (main) await this.setMainGeofence(geofence);
+    return geofence;
+  }
+
+  public static async setMainGeofence(
+    geofence: GeofenceModel
+  ): Promise<GeofenceModel> {
+    const { geofenceId } = geofence;
+    await prisma.geofenceModel.updateMany({
+      where: { NOT: { geofenceId } },
+      data: { main: false },
+    });
+
     return geofence;
   }
 
@@ -205,6 +220,7 @@ ORDER BY p.priority DESC LIMIT 1;
       profileId?: string;
       regionId?: string;
       weblink?: string;
+      main?: boolean;
       geojson?: { type: 'Polygon'; coordinates: [[number, number]][][] };
     }
   ): Promise<GeofenceModel> {
@@ -215,9 +231,10 @@ ORDER BY p.priority DESC LIMIT 1;
       regionId: PATTERN.REGION.ID.optional(),
       weblink: PATTERN.GEOFENCE.WEBLINK.optional(),
       geojson: PATTERN.GEOFENCE.GEOJSON.optional(),
+      main: PATTERN.GEOFENCE.MAIN.optional(),
     });
 
-    const { name, enabled, profileId, regionId, geojson, weblink } =
+    const { name, enabled, profileId, regionId, geojson, weblink, main } =
       await schema.validateAsync(props);
 
     if (name && name !== geofence.name) {
@@ -230,10 +247,13 @@ ORDER BY p.priority DESC LIMIT 1;
     }
 
     const { geofenceId } = geofence;
-    return prisma.geofenceModel.update({
+    const updatedGeofence = prisma.geofenceModel.update({
       where: { geofenceId },
       data: { name, profileId, enabled, regionId, geojson, weblink },
     });
+
+    if (main) await this.setMainGeofence(geofence);
+    return updatedGeofence;
   }
 
   /** 구역을 삭제합니다. */

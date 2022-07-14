@@ -29,6 +29,7 @@ model RegionModel {
 model GeofenceModel {
   geofenceId String  @id @default(uuid())
   enabled    Boolean @default(true)
+  main       Boolean @default(false)
 
   name    String
   geojson Json

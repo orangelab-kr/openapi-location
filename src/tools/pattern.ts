@@ -34,12 +34,13 @@ export const PATTERN = {
     PRIORITY: Joi.number().required(),
     SPEED: Joi.number().min(5).max(50).allow(null).optional(),
     COLOR: Joi.string()
-      .regex(/^#([a-fA-F0-9]{3}|[a-fA-F0-9]{6}|[a-fA-F0-9]{8})$/)
-      .required(),
+    .regex(/^#([a-fA-F0-9]{3}|[a-fA-F0-9]{6}|[a-fA-F0-9]{8})$/)
+    .required(),
     CAN_RETURN: Joi.boolean().required(),
     HAS_SURCHARGE: Joi.boolean().required(),
   },
   GEOFENCE: {
+    MAIN: Joi.boolean().default(false).optional(),
     POINT: Joi.object({
       lat: Joi.number().min(-90).max(90).required(),
       lng: Joi.number().min(-180).max(180).required(),
@@ -51,7 +52,7 @@ export const PATTERN = {
     GEOJSON: Joi.object({
       type: Joi.string().valid('Polygon').required(),
       coordinates: Joi.array()
-        .min(1)
+      .min(1)
         .required()
         .items(
           Joi.array()
